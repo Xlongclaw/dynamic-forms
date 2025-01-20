@@ -10,6 +10,7 @@ import XDropdown from "@/app/components/XDropdown";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import FeedbackPage from "./FeedbackPage";
+import ImageWithLoader from "@/app/components/ImageWithLoader";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -102,12 +103,12 @@ const Form = () => {
 
   return (
     <div className="grid grid-cols-5">
-      <div className="col-span-2 bg-black"></div>
-      <Image
+      <div className="col-span-2 "></div>
+      <ImageWithLoader
         width={1000}
         height={1000}
-        src={formTemplateData.banner || ""}
-        className="h-full fixed col-span-1 flex-1 bg-black w-2/5 object-top object-cover"
+        src={formTemplateData.banner}
+        className="h-full fixed flex-1  w-2/5 object-top object-cover"
         alt=""
       />
 

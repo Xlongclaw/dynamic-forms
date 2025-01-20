@@ -1,9 +1,10 @@
 "use client"
+import ImageWithLoader from "@/app/components/ImageWithLoader";
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
 import Image from "next/image";
 import React, { useState } from "react";
-import { BiFile, BiImageAdd } from "react-icons/bi";
+import { BiFile, BiImageAdd, BiPlus, BiX } from "react-icons/bi";
 import { GoCheckbox } from "react-icons/go";
 import { IoRadioButtonOn, IoReload } from "react-icons/io5";
 import { PiTextT } from "react-icons/pi";
@@ -239,20 +240,28 @@ const CreateFormPage: React.FC = () => {
       <div className="col-span-2 border-r justify-center items-center fixed flex w-2/5 h-full">
 
         {
-          !bannerFile ? <label htmlFor="banner-input-btn" className="flex cursor-pointer items-center font-medium text-sm border p-2 gap-2 rounded-md bg-black hover:bg-white hover:text-black text-white">
-            <BiImageAdd size={32} />
-            UPLOAD IMAGE
-          </label> :
-          <div className="w-full h-full relative">
-            <Image className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
-            <div className="flex gap-4 absolute bottom-4 right-4">
+          !bannerFile ? 
+          <div className="flex flex-col items-center">
 
-            <label htmlFor="banner-input-btn" className="flex  cursor-pointer items-center font-medium text-xs border p-1 gap-2 rounded-md bg-black hover:bg-white hover:text-black text-white">
-            <IoReload size={24} />
-            CHANGE IMAGE
+            <BiImageAdd size={64} className="mb-4 text-zinc-200" />
+          <label htmlFor="banner-input-btn" className="flex cursor-pointer items-center border-zinc-800 pr-4 transition-all active:scale-90 font-medium text-sm border p-2 gap-2 rounded-full bg-zinc-800 hover:bg-white hover:text-black text-white">
+            <BiPlus size={24} />
+            Add Banner Image
           </label>
-            <label onClick={()=>setBannerFile(null)} className="flex cursor-pointer  items-center font-medium text-xs border p-1 gap-2 rounded-md border-red-500 bg-black hover:bg-red-500 hover:text-white text-red-500">
-            <TiDelete size={24} />
+          </div>
+           :
+          <div className="w-full h-full relative text-zinc-800">
+
+            
+            <ImageWithLoader width={1000} height={1000} className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
+            <div className="flex gap-2 absolute bottom-4 right-4">
+
+            <label htmlFor="banner-input-btn" className="flex pr-4  cursor-pointer items-center font-medium text-xs border p-2 gap-2 bg-white hover:bg-transparent transition-all hover:text-white text-zinc-800 border-white rounded-full">
+            <IoReload size={24} />
+            Change Image
+          </label>
+            <label onClick={()=>setBannerFile(null)} className="flex cursor-pointer  items-center font-medium text-xs border p-2 gap-2 rounded-full border-white bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-red-500">
+            <BiX size={24} />
           </label>
             </div>
           </div>
