@@ -1,67 +1,63 @@
-import React, { useState } from "react";
+import React from 'react';
+import { BiInfoCircle } from 'react-icons/bi';
+import { BsTextParagraph } from 'react-icons/bs';
 
-interface TextareaFieldProps {
-  label: string;
-  value?: string;
-  onChange: (value: string) => void; // Change handler
-  placeholder?: string;
-  rows?: number; // Number of rows for the textarea
-  maxLength?: number; // Maximum allowed characters
+interface XTextAreaProps {
+    label: string;
+    placeholder: string;
+    infoText: string;
+    required?: boolean;
+    value?: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    rows?: number; // To define the number of rows in the text area
+    cols?: number; // To define the number of columns in the text area
 }
 
-const TextareaField: React.FC<TextareaFieldProps> = ({
-  label,
-  value = "",
-  onChange,
-  placeholder = `Enter ${label}`,
-  rows = 3,
-  maxLength = 500,
+const XTextArea: React.FC<XTextAreaProps> = ({
+    label,
+    placeholder,
+    infoText,
+    required = false,
+    value,
+    onChange,
+    rows = 4, // Default to 4 rows
+    cols = 50, // Default to 50 columns
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editableLabel, setEditableLabel] = useState(label);
+    const [infoHovered, setInfoHovered] = React.useState<boolean>(false);
 
-  const handleLabelChange = (newLabel: string) => {
-    setEditableLabel(newLabel);
-  };
-
-  const handleBlur = () => {
-    setIsEditing(false);
-  };
-
-  return (
-    <div className="flex flex-col space-y-2">
-      <div className="flex items-center space-x-2">
-        {isEditing ? (
-          <input
-            type="text"
-            value={editableLabel}
-            onChange={(e) => handleLabelChange(e.target.value)}
-            onBlur={handleBlur}
-            autoFocus
-            className="border px-2 py-1 rounded"
-          />
-        ) : (
-          <label
-            className="font-medium cursor-pointer"
-            onClick={() => setIsEditing(true)}
-          >
-            {editableLabel}
-          </label>
-        )}
-      </div>
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        rows={rows}
-        maxLength={maxLength}
-        className="border px-3 py-2 rounded resize-none"
-      />
-      <div className="text-sm text-gray-500">
-        {value.length}/{maxLength} characters
-      </div>
-    </div>
-  );
+    return (
+        <div className='flex flex-col xl:w-[40rem] w-full'>
+            <div className='mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base'>
+                <BsTextParagraph />
+                {label}
+                {required && <span className='text-red-600 ml-1'>*</span>}
+                <BiInfoCircle
+                    onMouseOver={() => setInfoHovered(true)}
+                    onMouseOut={() => setInfoHovered(false)}
+                    className='ml-1 text-zinc-500 hover:text-black'
+                />
+                {
+                    infoHovered &&
+                <div
+                    className={` bg-zinc-800 sm:block hidden text-white px-2 rounded text-sm mx-2 py-0.5`}
+                >
+                    {infoText}
+                </div>
+                }
+            </div>
+            <textarea
+                placeholder={placeholder}
+                className='border p-3 focus:outline-sky-700 rounded-md sm:text-base text-sm'
+                value={value}
+                onChange={onChange}
+                required={required}
+                rows={rows}
+                cols={cols}
+                onFocus={() => setInfoHovered(true)}
+                onBlur={() => setInfoHovered(false)}
+            />
+        </div>
+    );
 };
 
-export default TextareaField;
+export default XTextArea;

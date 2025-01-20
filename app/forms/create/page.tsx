@@ -253,7 +253,7 @@ const CreateFormPage: React.FC = () => {
           <div className="w-full h-full relative text-zinc-800">
 
             
-            <ImageWithLoader width={1000} height={1000} className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
+            <ImageWithLoader className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
             <div className="flex gap-2 absolute bottom-4 right-4">
 
             <label htmlFor="banner-input-btn" className="flex pr-4  cursor-pointer items-center font-medium text-xs border p-2 gap-2 bg-white hover:bg-transparent transition-all hover:text-white text-zinc-800 border-white rounded-full">
@@ -309,7 +309,11 @@ const CreateFormPage: React.FC = () => {
             className="block w-full border px-3 py-2 mb-3"
           >
             <option value="text">Text</option>
+            <option value="phone">Phone</option>
+            <option value="email">Email</option>
             <option value="image">Image</option>
+            <option value="description">Description</option>
+            <option value="images">Images</option>
             <option value="file">File</option>
             <option value="checkbox">Checkbox</option>
             <option value="radio">Radio</option>

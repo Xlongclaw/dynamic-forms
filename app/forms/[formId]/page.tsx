@@ -11,6 +11,10 @@ import Image from "next/image";
 import toast from "react-hot-toast";
 import FeedbackPage from "./FeedbackPage";
 import ImageWithLoader from "@/app/components/ImageWithLoader";
+import XImagesInput from "@/app/components/XImagesInput";
+import XEmailInput from "@/app/components/XEmailInput";
+import XPhoneInput from "@/app/components/XPhoneInput";
+import XTextArea from "@/app/components/XTextArea";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -102,27 +106,36 @@ const Form = () => {
   if (submitted === true) return <FeedbackPage />;
 
   return (
-    <div className="w-screen flex overflow-hidden">
-      <div className=" h-screen xl:w-2/5 w-1/2 lg:block hidden">
-        <ImageWithLoader
-        
-          src={formTemplateData.banner}
-          className="h-full"
-          alt=""
-        />
-      </div>
+    <div className="w-screen flex overflow-hidden justify-center">
+      {formTemplateData.banner && (
+        <div className=" h-screen xl:w-2/5 w-1/2 lg:block hidden">
+          <ImageWithLoader
+            src={formTemplateData.banner}
+            className="h-full"
+            alt=""
+          />
+        </div>
+      )}
 
-      <div className="col-span-3 lg:w-3/5 lg:p-8 md:p-6 sm:p-4 p-3 h-screen overflow-y-auto">
+      <div className={`col-span-3 ${!formTemplateData.banner || formTemplateData.banner=="" ? "w-full":"lg:w-3/5"}  lg:p-8 md:p-6 sm:p-4 p-3 h-screen overflow-y-auto`}>
+        {formTemplateData.bannerLandscape !== "" &&
+          formTemplateData.bannerLandscape && (
+            <ImageWithLoader
+              alt=""
+              src={formTemplateData.bannerLandscape}
+              className="lg:hidden"
+            />
+          )}
         <form
           className="flex flex-col md:gap-8 gap-6 mx-auto justify-center items-center lg:mt-16 mt-8"
           onSubmit={handleSubmit}
         >
           {formTemplateData && (
             <div className="flex flex-col items-start xl:w-[40rem]">
-              <label className="lg:text-4xl md:text-3xl text-2xl font-semibold tracking-[1px] mb-4">
+              <label className="lg:text-4xl md:text-3xl text-2xl lg:text-start text-center mx-auto lg:leading-[3.5rem] lg:mx-0 font-semibold tracking-[1px] mb-4">
                 {formTemplateData.title}
               </label>
-              <p className="text-zinc-500 font-normal text-sm leading-7 border-b pb-4">
+              <p className="text-zinc-500 font-normal text-sm lg:text-start text-center leading-7 border-b pb-4">
                 {formTemplateData.description}
               </p>
               <p className="my-4 bg-green-600 px-2 rounded-full text-white text-sm">
@@ -157,15 +170,69 @@ const Form = () => {
                   />
                 );
 
+              case "email":
+                return (
+                  <XEmailInput
+                    key={field.key}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    infoText={field.infoText}
+                    required={field.required}
+                    value={formData[field.key] || ""}
+                    onChange={(e) =>
+                      handleInputChange(field.key, e.target.value)
+                    }
+                  />
+                );
+              case "phone":
+                return (
+                  <XPhoneInput
+                    key={field.key}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    infoText={field.infoText}
+                    required={field.required}
+                    value={formData[field.key] || ""}
+                    onChange={(e) =>
+                      handleInputChange(field.key, e.target.value)
+                    }
+                  />
+                );
+              case "description":
+                return (
+                  <XTextArea
+                    key={field.key}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    infoText={field.infoText}
+                    required={field.required}
+                    value={formData[field.key] || ""}
+                    onChange={(e) =>
+                      handleInputChange(field.key, e.target.value)
+                    }
+                  />
+                );
+
               case "image":
                 return (
                   <XImageInput
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
-                    onImageChange={(url) => {
-                      setImageUrl(url);
-                      handleInputChange(field.key, url);
+                    onImageChange={(urls) => {
+                      handleInputChange(field.key, urls![0]);
+                    }}
+                  />
+                );
+
+              case "images":
+                return (
+                  <XImagesInput
+                    key={field.key}
+                    label={field.label}
+                    accept={field.accept}
+                    onImageChange={(urls) => {
+                      handleInputChange(field.key, urls);
                     }}
                   />
                 );
