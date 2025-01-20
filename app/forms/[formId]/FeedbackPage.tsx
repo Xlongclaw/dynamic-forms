@@ -13,7 +13,7 @@ const FeedbackPage = () => {
     <div className="flex flex-col justify-center items-center h-screen">
       <div className="flex flex-col items-center gap-2 max-w-[30rem]">
         <BsCheck2Circle className="text-green-600" size={64} />
-        <p className="text-center mt-3 text-gray-500">
+        <p className="text-center mt-3 text-gray-500 px-4">
           Thank you for your submission! We have successfully recorded your
           response and appreciate the time you took to provide your input. Your
           feedback is valuable to us and plays an essential role in improving

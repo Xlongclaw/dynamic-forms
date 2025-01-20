@@ -11,7 +11,7 @@ interface XRadioProps {
 
 const XRadio: React.FC<XRadioProps> = ({ label, options, selectedValue, onChange, required = false }) => {
     return (
-        <div className="w-[40rem] bg-zinc-50 border p-6 rounded-xl">
+        <div className="xl:w-[40rem] w-full bg-zinc-50 border p-6 rounded-xl">
             <div className="text-base text-zinc-700  flex items-center gap-2 font-medium mb-4">
             <CgOptions size={20}/>
                 {label} {required && <span className="text-red-600">*</span>}

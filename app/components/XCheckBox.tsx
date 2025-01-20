@@ -25,8 +25,8 @@ const XCheckbox: React.FC<XCheckboxProps> = ({
     };
 
     return (
-        <div className={`flex flex-col ${className} w-[40rem] text-zinc-600 bg-zinc-50 p-6 border rounded-xl`}>
-            <span className=" text-base text-zinc-600 font-medium mb-4 flex items-center gap-2">
+        <div className={`flex flex-col ${className} xl:w-[40rem] w-full text-zinc-600 bg-zinc-50 sm:p-6 p-3 border rounded-xl`}>
+            <span className=" text-zinc-600 font-medium mb-4 flex items-center gap-2">
             <BiCheckCircle size={20}/>
 
                 {label} {required && <span className="text-red-600">*</span>}
@@ -45,13 +45,13 @@ const XCheckbox: React.FC<XCheckboxProps> = ({
                 </label>
             ) : (
                 options.map((option) => (
-                    <label key={option} className="flex items-center space-x-2 py-3">
+                    <label key={option} className="flex items-center space-x-2 py-3  md:text-base text-sm">
                         <input
                             type="checkbox"
                             value={option}
                             onChange={(e) => handleCheckboxChange(option, e.target.checked)}
                             checked={selectedValues.includes(option)}
-                            className="w-4 h-4 cursor-pointer"
+                            className="w-4 h-4 cursor-pointer "
                             required={required} // Applying required attribute to each checkbox in the group
                         />
                         <span>{option}</span>

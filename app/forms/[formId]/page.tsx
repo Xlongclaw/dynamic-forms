@@ -86,7 +86,7 @@ const Form = () => {
       setSubmitted(true);
     } catch (error) {
       console.log(error);
-      
+
       toast.error("Form submission failed. Please try again.");
     }
   };
@@ -102,24 +102,24 @@ const Form = () => {
   if (submitted === true) return <FeedbackPage />;
 
   return (
-    <div className="grid grid-cols-5">
-      <div className="col-span-2 "></div>
-      <ImageWithLoader
-        width={1000}
-        height={1000}
-        src={formTemplateData.banner}
-        className="h-full fixed flex-1  w-2/5 object-top object-cover"
-        alt=""
-      />
+    <div className="w-screen flex overflow-hidden">
+      <div className=" h-screen xl:w-2/5 w-1/2 lg:block hidden">
+        <ImageWithLoader
+        
+          src={formTemplateData.banner}
+          className="h-full"
+          alt=""
+        />
+      </div>
 
-      <div className="col-span-3 p-8 flex-1">
+      <div className="col-span-3 lg:w-3/5 lg:p-8 md:p-6 sm:p-4 p-3 h-screen overflow-y-auto">
         <form
-          className="flex flex-col gap-8 mx-auto justify-center items-center mt-16"
+          className="flex flex-col md:gap-8 gap-6 mx-auto justify-center items-center lg:mt-16 mt-8"
           onSubmit={handleSubmit}
         >
           {formTemplateData && (
-            <div className="flex flex-col items-start w-[40rem]">
-              <label className="text-4xl font-semibold tracking-[1px] mb-4">
+            <div className="flex flex-col items-start xl:w-[40rem]">
+              <label className="lg:text-4xl md:text-3xl text-2xl font-semibold tracking-[1px] mb-4">
                 {formTemplateData.title}
               </label>
               <p className="text-zinc-500 font-normal text-sm leading-7 border-b pb-4">
@@ -243,7 +243,7 @@ const Form = () => {
           })}
           <button
             type="submit"
-            className="bg-blue-500 w-[40rem] py-3 rounded-md text-white hover:bg-blue-700"
+            className="bg-blue-500 xl:w-[40rem] w-full py-3 sm:text-base text-sm rounded-md text-white hover:bg-blue-700"
           >
             SUBMIT
           </button>

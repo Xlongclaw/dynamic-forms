@@ -4,6 +4,7 @@ import { FiDelete } from 'react-icons/fi';
 import { RxReload } from 'react-icons/rx';
 import { uploadFileToR2 } from '../utils/uploadFileToR2';
 import Image from 'next/image';
+import ImageWithLoader from './ImageWithLoader';
 
 interface XImageInputProps {
     label: string;
@@ -50,11 +51,11 @@ const XImageInput: React.FC<XImageInputProps> = ({ label, accept, onImageChange 
     };
 
     return (
-        <div className="w-[40rem] text-zinc-700 text-lg">
+        <div className="xl:w-[40rem] w-full text-zinc-700 text-lg">
             {/* <ImImage/> */}
             <div className='flex items-center gap-3 mb-6'>
                 {/* <BiImage size={54} /> */}
-                <BiImages size={32} />
+                <BiImages className='md:block hidden' size={32} />
                 <div>
                     <label htmlFor="image-upload" className="block text-base  text-zinc-700">
                         {label}
@@ -81,13 +82,13 @@ const XImageInput: React.FC<XImageInputProps> = ({ label, accept, onImageChange 
                         className="mt-2 cursor-pointer justify-center bg-zinc-50 text-zinc-700 py-2 px-2 rounded-md border flex items-center gap-2 text-sm font-medium"
                     >
                         <BiImageAdd size={24} />
-                        CHOOSE FILE
+                        Select File
                     </label>
                 )
             }
             {imageFile && (
                 <div className="mt-2 text-center">
-                    <Image
+                    <ImageWithLoader
                         src={URL.createObjectURL(imageFile)}
                         alt="Selected"
                         className="w-full h-60 object-cover rounded-md mx-auto"

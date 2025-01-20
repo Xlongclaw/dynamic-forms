@@ -4,12 +4,12 @@ import Image from 'next/image';
 interface ImageProps {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  // width: number;
+  // height: number;
   className?: string;
 }
 
-const ImageWithLoader: React.FC<ImageProps> = ({ src, alt, width, height, className }) => {
+const ImageWithLoader: React.FC<ImageProps> = ({ src, alt,className }) => {
   const [isLoading, setIsLoading] = useState(true); // State to track loading
 
   const handleImageLoad = () => {
@@ -41,11 +41,11 @@ const ImageWithLoader: React.FC<ImageProps> = ({ src, alt, width, height, classN
       <img
         src={src}
         alt={alt}
-        width={width}
-        height={height}
+        // width={width}
+        // height={height}
         onLoad={handleImageLoad}
         onError={handleImageError}
-        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+        className={`transition-opacity h-full w-full object-cover duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
       />
     </div>
   );

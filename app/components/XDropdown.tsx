@@ -20,7 +20,7 @@ const XDropdown: React.FC<XDropdownProps> = ({
   placeholder = "Select an option",
 }) => {
   return (
-    <div className="w-[40rem]">
+    <div className="xl:w-[40rem] w-full">
       <label className="text-base text-zinc-700 mb-4 flex items-center gap-2">
         <RiDropdownList size={20} />
         {/* <RxDropdownMenu/> */}

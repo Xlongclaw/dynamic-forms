@@ -16,7 +16,7 @@ const XFileInput: React.FC<XFileInputProps> = ({ label, accept, onFilesChange, m
     };
 
     return (
-        <div className="w-[30rem]">
+        <div className="xl:w-[40rem] w-full">
             <label htmlFor="file-upload" className="block text-lg font-medium">
                 {label} {required && <span className="text-red-600">*</span>}
             </label>
