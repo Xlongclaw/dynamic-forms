@@ -1,9 +1,9 @@
 "use client"
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
+import Image from "next/image";
 import React, { useState } from "react";
 import { BiFile, BiImageAdd } from "react-icons/bi";
-import { FiFile } from "react-icons/fi";
 import { GoCheckbox } from "react-icons/go";
 import { IoRadioButtonOn, IoReload } from "react-icons/io5";
 import { PiTextT } from "react-icons/pi";
@@ -61,8 +61,6 @@ const CreateFormPage: React.FC = () => {
   const [currentOption, setCurrentOption] = useState<string>("");
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [graphicsFiles, setGraphicsFiles] = useState<File[]>([]);
-  const [bannerPreview, setBannerPreview] = useState<string | null>(null);
-  const [graphicsPreviews, setGraphicsPreviews] = useState<string[]>([]);
 
   const handleAddOption = () => {
     if (currentOption.trim()) {
@@ -108,23 +106,23 @@ const CreateFormPage: React.FC = () => {
     });
   };
 
-  const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setBannerFile(file);
-      setBannerPreview(URL.createObjectURL(file));
-    }
-  };
+  // const handleBannerUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setBannerFile(file);
+  //     setBannerPreview(URL.createObjectURL(file));
+  //   }
+  // };
 
-  const handleGraphicsUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      const newFiles = Array.from(files);
-      setGraphicsFiles((prev) => [...prev, ...newFiles]);
-      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
-      setGraphicsPreviews((prev) => [...prev, ...newPreviews]);
-    }
-  };
+  // const handleGraphicsUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = e.target.files;
+  //   if (files) {
+  //     const newFiles = Array.from(files);
+  //     setGraphicsFiles((prev) => [...prev, ...newFiles]);
+  //     const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+  //     setGraphicsPreviews((prev) => [...prev, ...newPreviews]);
+  //   }
+  // };
 
   const uploadFile = async (file: File, folder: string): Promise<string> => {
     const formData = new FormData();
@@ -176,9 +174,7 @@ const CreateFormPage: React.FC = () => {
         inputs: [],
       });
       setBannerFile(null);
-      setBannerPreview(null);
       setGraphicsFiles([]);
-      setGraphicsPreviews([]);
     } catch (error) {
       console.error("Error saving form:", error);
       alert("Failed to save form. Please try again.");
@@ -227,15 +223,15 @@ const CreateFormPage: React.FC = () => {
 
 
 
-  const handleDeleteBanner = () => {
-    setBannerFile(null);
-    setBannerPreview(null); // Clear the preview
-  };
+  // const handleDeleteBanner = () => {
+  //   setBannerFile(null);
+  //   setBannerPreview(null); // Clear the preview
+  // };
 
-  const handleDeleteGraphic = (index: number) => {
-    setGraphicsFiles((prev) => prev.filter((_, i) => i !== index)); // Remove specific file by index
-    setGraphicsPreviews((prev) => prev.filter((_, i) => i !== index)); // Remove specific preview by index
-  };
+  // const handleDeleteGraphic = (index: number) => {
+  //   setGraphicsFiles((prev) => prev.filter((_, i) => i !== index)); // Remove specific file by index
+  //   setGraphicsPreviews((prev) => prev.filter((_, i) => i !== index)); // Remove specific preview by index
+  // };
 
 
   return (
@@ -248,7 +244,7 @@ const CreateFormPage: React.FC = () => {
             UPLOAD IMAGE
           </label> :
           <div className="w-full h-full relative">
-            <img className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
+            <Image className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
             <div className="flex gap-4 absolute bottom-4 right-4">
 
             <label htmlFor="banner-input-btn" className="flex  cursor-pointer items-center font-medium text-xs border p-1 gap-2 rounded-md bg-black hover:bg-white hover:text-black text-white">

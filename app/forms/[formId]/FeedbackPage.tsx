@@ -1,13 +1,13 @@
-import { useState } from "react";
+
 import { BsCheck2Circle } from "react-icons/bs";
 import { IoReload } from "react-icons/io5";
 
 const FeedbackPage = () => {
-  const [rating, setRating] = useState<number>(5); // Default rating is 5
+  // const [rating, setRating] = useState<number>(5); // Default rating is 5
 
-  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRating(Number(e.target.value));
-  };
+  // const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setRating(Number(e.target.value));
+  // };
 
   return (
     <div className="flex flex-col justify-center items-center h-screen">

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 
 const roboto = Roboto({
   weight:["100","300","400", "500", "700", "900"],
   variable:"--font-roboto",
+  subsets:["latin"]
 })
 
 export const metadata: Metadata = {

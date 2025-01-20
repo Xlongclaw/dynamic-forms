@@ -58,6 +58,7 @@ export const getUploadUrl = async ({ extension, type }: UploadParams): Promise<a
       key: key,
     };
   } catch (e) {
+    console.log(e);
     throw new Error("Something went wrong while generating the upload URL");
   }
 };

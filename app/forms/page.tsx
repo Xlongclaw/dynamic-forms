@@ -3,19 +3,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import { FiFileText, FiEye, FiDatabase, FiPlus, FiFile } from "react-icons/fi";
-import { BiChevronRight, BiLink } from "react-icons/bi";
-import { TbForms } from "react-icons/tb";
 
 // Define an interface for form data
-interface Form {
+interface IForm {
   _id: string;
   title: string;
   description: string;
-  inputs: Object[];
+  inputs: Record<string, any>[];
 }
 
+
 const AllForms = () => {
-  const [forms, setForms] = useState<Form[]>([]);
+  const [forms, setForms] = useState<IForm[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,6 +26,7 @@ const AllForms = () => {
         setLoading(false);
       } catch (err) {
         setError("Failed to fetch forms");
+        console.log(err);
         setLoading(false);
       }
     };

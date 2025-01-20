@@ -31,7 +31,7 @@ const uploadFileToR2 = async (
   };
 
   try {
-    const data = await s3.upload(params).promise();
+    await s3.upload(params).promise();
     const downloadUrl = `${process.env.NEXT_PUBLIC_STORAGE_URL}/${folder}/${file.name}`
     console.log('File uploaded successfully:', downloadUrl);
     return downloadUrl;

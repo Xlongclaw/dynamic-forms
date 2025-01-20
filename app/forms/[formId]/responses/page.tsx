@@ -6,11 +6,10 @@ import Link from "next/link";
 import {
   BiCheckCircle,
   BiChevronRight,
-  BiCopy,
   BiLink,
   BiXCircle,
 } from "react-icons/bi";
-import { GrFormFilter, GrFormFolder, GrFormView } from "react-icons/gr";
+import { GrFormFilter } from "react-icons/gr";
 import { TbForms } from "react-icons/tb";
 import DataChip from "./DataChip";
 import { updateReviewedStatus } from "@/app/utils/updateReviewedStatus";
@@ -64,6 +63,28 @@ const ResponsesPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchResponses = async () => {
+        try {
+          const formResponse = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
+          );
+          if (!formResponse.ok) {
+            throw new Error(`Failed to fetch form with ID: ${formId}`);
+          }
+          const data = await formResponse.json();
+          setFormTemplateData(data.form);
+    
+          // Fetch the responses
+          const responsesResponse = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
+          );
+          setResponses(responsesResponse.data.data);
+          setLoading(false);
+        } catch (error) {
+          setError("Failed to fetch data.");
+          setLoading(false);
+        }
+      };
     fetchResponses();
   }, [formId]);
 

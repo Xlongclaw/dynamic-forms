@@ -1,5 +1,5 @@
 import React from 'react';
-import { BiCheck, BiCheckCircle } from 'react-icons/bi';
+import { BiCheckCircle } from 'react-icons/bi';
 
 interface XCheckboxProps {
     label: string; // Label for the checkbox or checkbox group

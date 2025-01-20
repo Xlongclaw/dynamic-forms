@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BiImage, BiImageAdd, BiImages } from 'react-icons/bi';
+import {  BiImageAdd, BiImages } from 'react-icons/bi';
 import { FiDelete } from 'react-icons/fi';
-import { ImImage } from 'react-icons/im';
 import { RxReload } from 'react-icons/rx';
 import { uploadFileToR2 } from '../utils/uploadFileToR2';
+import Image from 'next/image';
 
 interface XImageInputProps {
     label: string;
@@ -87,7 +87,7 @@ const XImageInput: React.FC<XImageInputProps> = ({ label, accept, onImageChange 
             }
             {imageFile && (
                 <div className="mt-2 text-center">
-                    <img
+                    <Image
                         src={URL.createObjectURL(imageFile)}
                         alt="Selected"
                         className="w-full h-60 object-cover rounded-md mx-auto"

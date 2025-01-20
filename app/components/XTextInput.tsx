@@ -1,7 +1,6 @@
 import React from 'react';
-import { BiInfoCircle, BiText } from 'react-icons/bi';
+import { BiInfoCircle } from 'react-icons/bi';
 import { BsTextParagraph } from 'react-icons/bs';
-import { PiTextT } from 'react-icons/pi';
 
 interface XTextInputProps {
     label: string;

@@ -1,7 +1,5 @@
 import React from 'react';
-import { BiSelection } from 'react-icons/bi';
 import { CgOptions } from 'react-icons/cg';
-import { GrSwitch } from 'react-icons/gr';
 
 interface XRadioProps {
     label: string;

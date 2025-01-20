@@ -7,11 +7,8 @@ import XFileInput from "@/app/components/XFileInput";
 import XCheckbox from "@/app/components/XCheckBox";
 import XRadio from "@/app/components/XRadioButton";
 import XDropdown from "@/app/components/XDropdown";
-import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import Image from "next/image";
 import toast from "react-hot-toast";
-import { BsCheck2Circle } from "react-icons/bs";
-import { IoReload } from "react-icons/io5";
 import FeedbackPage from "./FeedbackPage";
 
 const Form = () => {
@@ -87,6 +84,8 @@ const Form = () => {
       toast.success("Form submitted successfully!");
       setSubmitted(true);
     } catch (error) {
+      console.log(error);
+      
       toast.error("Form submission failed. Please try again.");
     }
   };
@@ -128,7 +127,7 @@ const Form = () => {
               <p className="my-4 bg-green-600 px-2 rounded-full text-white text-sm">
                 Instructions
               </p>
-              {formTemplateData.instructions.map((ins: string, i: number) => (
+              {formTemplateData.instructions.map((ins: string) => (
                 <p className="text-sm leading-7" key={ins}>
                   {ins}
                 </p>
