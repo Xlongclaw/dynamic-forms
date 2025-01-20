@@ -29,13 +29,22 @@ const ImageWithLoader: React.FC<ImageProps> = ({ src, alt, width, height, classN
         <div className="spinner"></div>
       </div>
       )}
-      <Image
+      {/* <Image
         src={src}
         alt={alt}
         width={width}
         height={height}
         onLoadingComplete={handleImageLoad} // Event fired when image is fully loaded
         onError={handleImageError} // Event fired when image fails to load
+        className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+      /> */}
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        onLoad={handleImageLoad}
+        onError={handleImageError}
         className={`transition-opacity duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
       />
     </div>
