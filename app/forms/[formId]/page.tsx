@@ -352,7 +352,7 @@ const Form = () => {
             <p>Submit</p>
 
             {!submitLoading ? (
-              <BsArrowRight size={20} />
+              <div></div>
             ) : (
               <div className="white-spinner"></div>
             )}
