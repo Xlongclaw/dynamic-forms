@@ -287,6 +287,7 @@ const Form = () => {
                     key={field.key}
                     label={field.label}
                     isSingle={field.isSingle}
+                    required={field.required}
                     options={field.options}
                     selectedValues={
                       field.isSingle
