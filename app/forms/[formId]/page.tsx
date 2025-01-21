@@ -119,11 +119,11 @@ const Form = () => {
   if (submitted === true)
     return (
       <FeedbackPage
-        amount={formTemplateData.razorpay.amount}
-        appName={formTemplateData.razorpay.appName}
+        amount={formTemplateData.razorpay.amount ?? "0"}
+        appName={formTemplateData.razorpay.appName?? ""}
         contact={formData.phone ?? formData.contact ?? formData.contactnumber}
-        email={formData.email}
-        keyId={formTemplateData.razorpay.keyId}
+        email={formData.email ?? ""}
+        keyId={formTemplateData.razorpay.keyId ?? ""}
       />
     );
 
@@ -260,6 +260,7 @@ const Form = () => {
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
+                    required={field.required}
                     onImageChange={(urls) => {
                       handleInputChange(field.key, urls);
                     }}

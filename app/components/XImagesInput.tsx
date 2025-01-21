@@ -9,12 +9,14 @@ interface XImageInputProps {
   label: string;
   accept: string; // Define the file types (e.g., 'image/*' or 'application/pdf')
   onImageChange: (images: string[]) => void; // Now expects an array of image URLs
+  required: boolean;
 }
 
 const XImagesInput: React.FC<XImageInputProps> = ({
   label,
   accept,
   onImageChange,
+  required,
 }) => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
@@ -58,6 +60,7 @@ const XImagesInput: React.FC<XImageInputProps> = ({
             className="block text-base text-zinc-700"
           >
             {label}
+            {required && <span className="text-lg text-red-600">*</span>}
           </label>
           <p className="text-sm text-zinc-400 text-start mt-1">
             Your {label} must be a PNG or JPEG, up to 1 MB, of any size.
