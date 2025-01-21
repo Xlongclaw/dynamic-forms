@@ -43,9 +43,9 @@ const RazorpayPayment: React.FC<RazorpayPaymentProps> = ({
   };
 
   const handlePayment = async () => {
-    setPaymentStatus("processing");
-
+    
     const scriptLoaded = await loadRazorpayScript();
+    setPaymentStatus("processing");
 
     if (!scriptLoaded) {
       alert(
