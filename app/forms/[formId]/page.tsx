@@ -15,6 +15,15 @@ import XImagesInput from "@/app/components/XImagesInput";
 import XEmailInput from "@/app/components/XEmailInput";
 import XPhoneInput from "@/app/components/XPhoneInput";
 import XTextArea from "@/app/components/XTextArea";
+import Link from "next/link";
+import {
+  BsArrowRight,
+  BsChevronRight,
+  BsInfoCircle,
+  BsWhatsapp,
+} from "react-icons/bs";
+import XGraphicsDisplay from "@/app/components/XGraphicsDisplay";
+import { BiChevronRight } from "react-icons/bi";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -28,6 +37,7 @@ const Form = () => {
   const [otherFiles, setOtherFiles] = useState<FileList | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>();
   const [loading, setLoading] = React.useState<boolean>(true);
+  const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Access the base URL from environment variables
 
@@ -64,6 +74,7 @@ const Form = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitLoading(true);
 
     try {
       const finalData = {
@@ -87,6 +98,7 @@ const Form = () => {
         throw new Error("Failed to submit form");
       }
       toast.success("Form submitted successfully!");
+      setSubmitLoading(false);
       setSubmitted(true);
     } catch (error) {
       console.log(error);
@@ -108,7 +120,7 @@ const Form = () => {
   return (
     <div className="w-screen flex overflow-hidden justify-center">
       {formTemplateData.banner && (
-        <div className=" h-screen xl:w-2/5 w-1/2 lg:block hidden">
+        <div className=" h-screen lg:w-2/5 w-1/2 lg:block hidden">
           <ImageWithLoader
             src={formTemplateData.banner}
             className="h-full"
@@ -117,7 +129,13 @@ const Form = () => {
         </div>
       )}
 
-      <div className={`col-span-3 ${!formTemplateData.banner || formTemplateData.banner=="" ? "w-full":"lg:w-3/5"}  lg:p-8 md:p-6 sm:p-4 p-3 h-screen overflow-y-auto`}>
+      <div
+        className={`col-span-3 ${
+          !formTemplateData.banner || formTemplateData.banner == ""
+            ? "w-full"
+            : "lg:w-3/5"
+        }  lg:p-8 md:p-6 sm:p-4 p-3 h-screen overflow-y-auto`}
+      >
         {formTemplateData.bannerLandscape !== "" &&
           formTemplateData.bannerLandscape && (
             <ImageWithLoader
@@ -131,8 +149,8 @@ const Form = () => {
           onSubmit={handleSubmit}
         >
           {formTemplateData && (
-            <div className="flex flex-col items-start xl:w-[40rem]">
-              <label className="lg:text-4xl md:text-3xl text-2xl lg:text-start text-center mx-auto lg:leading-[3.5rem] lg:mx-0 font-semibold tracking-[1px] mb-4">
+            <div className="flex flex-col items-start xl:w-[40rem] w-full">
+              <label className="lg:text-4xl md:text-3xl text-2xl lg:text-start text-center w-full mx-auto lg:leading-[3.5rem] lg:mx-0 font-semibold tracking-[1px] mb-4">
                 {formTemplateData.title}
               </label>
               <p className="text-zinc-500 font-normal text-sm lg:text-start text-center leading-7 border-b pb-4">
@@ -150,6 +168,7 @@ const Form = () => {
                 {" "}
                 <strong>*</strong> Indicates required question
               </p>
+              <XGraphicsDisplay imageArr={formTemplateData.graphics} />
             </div>
           )}
 
@@ -308,12 +327,61 @@ const Form = () => {
                 return null;
             }
           })}
+
+          {/* Conclusion Message */}
+          <div className="text-sm text-zinc-400 font-medium px-4">
+            {formTemplateData.conclusionMessage}
+          </div>
+
           <button
             type="submit"
-            className="bg-blue-500 xl:w-[40rem] w-full py-3 sm:text-base text-sm rounded-md text-white hover:bg-blue-700"
+            className="bg-blue-600 gap-4 flex py-3 px-8 xl:w-[40rem] w-full justify-between items-center sm:text-base text-sm rounded-full text-white hover:bg-blue-700"
           >
-            SUBMIT
+            <p></p>
+            <p>Submit</p>
+
+            {!submitLoading ? (
+              <BsArrowRight size={20} />
+            ) : (
+              <div className="white-spinner"></div>
+            )}
           </button>
+
+          {formFields.map((field) => {
+            switch (field.type) {
+              case "whatsappLink":
+                return (
+                  <Link
+                    className="bg-green-600 text-white flex justify-center items-center gap-2 xl:w-[40rem] w-full text-center py-3 rounded-full hover:bg-green-700 active:scale-95 transition-all"
+                    key={field.key}
+                    href={field.whatsappLink}
+                  >
+                    <BsWhatsapp size={20} />
+                    <p className=" mt-[1px]">{field.label}</p>
+                  </Link>
+                );
+            }
+          })}
+          <div className="xl:w-[40rem] w-full bg-zinc-700 text-white flex justify-center rounded-2xl p-8">
+            <div className="flex items-start gap-2">
+              <BsInfoCircle className="flex-shrink-0 mt-1" />
+              <p className="text-sm">
+                Do not submit confidential information such as credit card
+                details, mobile and ATM PINs, OTPs, account passwords, etc.{" "}
+                <span className="underline">Report Abuse</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-end gap-2">
+            <p className="text-sm font-medium text-zinc-800 mb-1">Powered by </p>
+            <div>
+              <p className="">
+                {" "}
+                <span className="font-bold text-3xl mr-2">Ricoz</span>
+                <span className="font-medium">Forms</span>{" "}
+              </p>
+            </div>
+          </div>
         </form>
       </div>
     </div>

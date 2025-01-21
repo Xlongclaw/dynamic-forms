@@ -27,7 +27,7 @@ const XTextArea: React.FC<XTextAreaProps> = ({
 
     return (
         <div className='flex flex-col xl:w-[40rem] w-full'>
-            <div className='mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base'>
+            <div className='mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base text-nowrap'>
                 <BsTextParagraph />
                 {label}
                 {required && <span className='text-red-600 ml-1'>*</span>}

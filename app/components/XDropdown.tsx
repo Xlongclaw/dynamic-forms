@@ -40,7 +40,16 @@ const XDropdown: React.FC<XDropdownProps> = ({
             {option}
           </option>
         ))}
+        {/* <option key={"others"} value="others">
+          {`Other`}
+        </option> */}
       </select>
+      {/* {options.includes("others") && (
+        <div>
+          <label htmlFor="">{`Specify Other ${label}`}</label>
+          <input type="text" />
+        </div>
+      )} */}
     </div>
   );
 };

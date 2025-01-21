@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import ImageWithLoader from "@/app/components/ImageWithLoader";
+import XImagesInput from "@/app/components/XImagesInput";
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
 import Image from "next/image";
@@ -23,6 +24,7 @@ interface FormField {
   accept?: string;
   multiple?: boolean;
   isSingle?: boolean;
+  whatsappLink: string;
 }
 
 interface FormType {
@@ -35,7 +37,6 @@ interface FormType {
 }
 
 const CreateFormPage: React.FC = () => {
-
   const [form, setForm] = useState<FormType>({
     title: "",
     description: "",
@@ -56,6 +57,7 @@ const CreateFormPage: React.FC = () => {
     accept: "",
     multiple: false,
     isSingle: false,
+    whatsappLink: "",
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -104,6 +106,7 @@ const CreateFormPage: React.FC = () => {
       accept: "",
       multiple: false,
       isSingle: false,
+      whatsappLink: "",
     });
   };
 
@@ -142,26 +145,26 @@ const CreateFormPage: React.FC = () => {
   const handleSaveForm = async () => {
     try {
       let bannerUrl = "";
-      const graphicsUrls: string[] = [];
 
       if (bannerFile) {
-        bannerUrl = await uploadFileToR2(bannerFile, 'onboarding', 'onboarding', 1);;
-      }
-
-      if (graphicsFiles.length > 0) {
-        for (const file of graphicsFiles) {
-          const url = await uploadFile(file, "graphics");
-          graphicsUrls.push(url);
-        }
+        bannerUrl = await uploadFileToR2(
+          bannerFile,
+          "onboarding",
+          "onboarding",
+          1
+        );
       }
 
       const finalForm = {
         ...form,
         banner: bannerUrl,
-        graphics: graphicsUrls,
+        graphics:form.graphics,
       };
 
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/form`, finalForm);
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
+        finalForm
+      );
       console.log("Form created successfully:", response.data);
       alert("Form created successfully!");
 
@@ -182,9 +185,11 @@ const CreateFormPage: React.FC = () => {
     }
   };
 
-  const handleBannerImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleBannerImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.files) {
-      setBannerFile(e.target.files[0])
+      setBannerFile(e.target.files[0]);
     }
 
     //   if (e.target.files) {
@@ -198,9 +203,7 @@ const CreateFormPage: React.FC = () => {
     //         alert('Error uploading file');
     //     }
     // }
-
-  }
-
+  };
 
   const handleDeleteOption = (index: number) => {
     setCurrentField((prev) => ({
@@ -208,7 +211,6 @@ const CreateFormPage: React.FC = () => {
       options: prev.options?.filter((_, i) => i !== index),
     }));
   };
-
 
   const handleEditField = (index: number) => {
     setEditIndex(index);
@@ -222,8 +224,6 @@ const CreateFormPage: React.FC = () => {
     }));
   };
 
-
-
   // const handleDeleteBanner = () => {
   //   setBannerFile(null);
   //   setBannerPreview(null); // Clear the preview
@@ -234,53 +234,83 @@ const CreateFormPage: React.FC = () => {
   //   setGraphicsPreviews((prev) => prev.filter((_, i) => i !== index)); // Remove specific preview by index
   // };
 
-
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-2 border-r justify-center items-center fixed flex w-2/5 h-full">
-
-        {
-          !bannerFile ? 
+        {!bannerFile ? (
           <div className="flex flex-col items-center">
-
             <BiImageAdd size={64} className="mb-4 text-zinc-200" />
-          <label htmlFor="banner-input-btn" className="flex cursor-pointer items-center border-zinc-800 pr-4 transition-all active:scale-90 font-medium text-sm border p-2 gap-2 rounded-full bg-zinc-800 hover:bg-white hover:text-black text-white">
-            <BiPlus size={24} />
-            Add Banner Image
-          </label>
+            <label
+              htmlFor="banner-input-btn"
+              className="flex cursor-pointer items-center border-zinc-800 pr-4 transition-all active:scale-90 font-medium text-sm border p-2 gap-2 rounded-full bg-zinc-800 hover:bg-white hover:text-black text-white"
+            >
+              <BiPlus size={24} />
+              Add Banner Image
+            </label>
           </div>
-           :
+        ) : (
           <div className="w-full h-full relative text-zinc-800">
-
-            
-            <ImageWithLoader className="h-full w-full object-cover" src={URL.createObjectURL(bannerFile)} alt="" />
+            <ImageWithLoader
+              className="h-full w-full object-cover"
+              src={URL.createObjectURL(bannerFile)}
+              alt=""
+            />
             <div className="flex gap-2 absolute bottom-4 right-4">
-
-            <label htmlFor="banner-input-btn" className="flex pr-4  cursor-pointer items-center font-medium text-xs border p-2 gap-2 bg-white hover:bg-transparent transition-all hover:text-white text-zinc-800 border-white rounded-full">
-            <IoReload size={24} />
-            Change Image
-          </label>
-            <label onClick={()=>setBannerFile(null)} className="flex cursor-pointer  items-center font-medium text-xs border p-2 gap-2 rounded-full border-white bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-red-500">
-            <BiX size={24} />
-          </label>
+              <label
+                htmlFor="banner-input-btn"
+                className="flex pr-4  cursor-pointer items-center font-medium text-xs border p-2 gap-2 bg-white hover:bg-transparent transition-all hover:text-white text-zinc-800 border-white rounded-full"
+              >
+                <IoReload size={24} />
+                Change Image
+              </label>
+              <label
+                onClick={() => setBannerFile(null)}
+                className="flex cursor-pointer  items-center font-medium text-xs border p-2 gap-2 rounded-full border-white bg-white hover:bg-red-500 hover:border-red-500 hover:text-white text-red-500"
+              >
+                <BiX size={24} />
+              </label>
             </div>
           </div>
-
-        }
-        <input type="file" className="hidden" id="banner-input-btn" accept={'image/*'}
-          onChange={handleBannerImageChange} />
-
+        )}
+        <input
+          type="file"
+          className="hidden"
+          id="banner-input-btn"
+          accept={"image/*"}
+          onChange={handleBannerImageChange}
+        />
       </div>
       <div className="col-span-2"></div>
       <div className="col-span-3 p-8 mr-20 mt-16 ">
         <div className="w-[3rem] border gap-4 bg-white fixed top-1/2 -translate-y-1/2 right-8 shadow-lg rounded-full flex flex-col justify-start items-center py-8">
-          <PiTextT size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <TbTextPlus size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <BiImageAdd size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <GoCheckbox size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <IoRadioButtonOn size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <RxDropdownMenu size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
-          <BiFile size={32} className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all" />
+          <PiTextT
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <TbTextPlus
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <BiImageAdd
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <GoCheckbox
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <IoRadioButtonOn
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <RxDropdownMenu
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
+          <BiFile
+            size={32}
+            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+          />
         </div>
 
         <h1 className="text-2xl font-bold mb-4">Create Form</h1>
@@ -299,13 +329,24 @@ const CreateFormPage: React.FC = () => {
             onChange={(e) => setForm({ ...form, description: e.target.value })}
             className="block w-full border px-3 py-2 mb-3"
           />
+          {/* <XImagesInput
+            label="Graphics"
+            accept="*"
+            onImageChange={(urls) => {
+              setForm({ ...form, graphics: urls });
+            }}
+          /> */}
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold mb-3">{editIndex !== null ? "Edit Field" : "Add Form Field"}</h2>
+          <h2 className="text-xl font-bold mb-3">
+            {editIndex !== null ? "Edit Field" : "Add Form Field"}
+          </h2>
           <select
             value={currentField.type}
-            onChange={(e) => setCurrentField({ ...currentField, type: e.target.value })}
+            onChange={(e) =>
+              setCurrentField({ ...currentField, type: e.target.value })
+            }
             className="block w-full border px-3 py-2 mb-3"
           >
             <option value="text">Text</option>
@@ -318,19 +359,24 @@ const CreateFormPage: React.FC = () => {
             <option value="checkbox">Checkbox</option>
             <option value="radio">Radio</option>
             <option value="dropdown">Dropdown</option>
+            <option value="whatsappLink">WhatsApp Link</option>
           </select>
           <input
             type="text"
             placeholder="Field Label"
             value={currentField.label}
-            onChange={(e) => setCurrentField({ ...currentField, label: e.target.value })}
+            onChange={(e) =>
+              setCurrentField({ ...currentField, label: e.target.value })
+            }
             className="block w-full border px-3 py-2 mb-3"
           />
           <input
             type="text"
             placeholder="Field Key"
             value={currentField.key}
-            onChange={(e) => setCurrentField({ ...currentField, key: e.target.value })}
+            onChange={(e) =>
+              setCurrentField({ ...currentField, key: e.target.value })
+            }
             className="block w-full border px-3 py-2 mb-3"
           />
           {currentField.type === "text" && (
@@ -339,7 +385,25 @@ const CreateFormPage: React.FC = () => {
               placeholder="Placeholder"
               value={currentField.placeholder}
               onChange={(e) =>
-                setCurrentField({ ...currentField, placeholder: e.target.value })
+                setCurrentField({
+                  ...currentField,
+                  placeholder: e.target.value,
+                })
+              }
+              className="block w-full border px-3 py-2 mb-3"
+            />
+          )}
+
+          {currentField.type === "whatsappLink" && (
+            <input
+              type="text"
+              placeholder="WhatsApp Link"
+              value={currentField.whatsappLink}
+              onChange={(e) =>
+                setCurrentField({
+                  ...currentField,
+                  whatsappLink: e.target.value,
+                })
               }
               className="block w-full border px-3 py-2 mb-3"
             />
@@ -453,36 +517,6 @@ const CreateFormPage: React.FC = () => {
               >
                 Delete
               </button>
-            </div>
-          )}
-        </div> */}
-
-        {/* <div className="mb-6">
-          <h2 className="text-xl font-bold mb-3">Graphics</h2>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleGraphicsUpload}
-            className="block mb-3"
-          />
-          {graphicsPreviews.length > 0 && (
-            <div className="grid grid-cols-3 gap-4">
-              {graphicsPreviews.map((preview, index) => (
-                <div key={index} className="relative">
-                  <img
-                    src={preview}
-                    alt={`Graphic Preview ${index}`}
-                    className="w-full h-32 object-cover"
-                  />
-                  <button
-                    onClick={() => handleDeleteGraphic(index)}
-                    className="absolute top-0 right-0 text-red-500"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
             </div>
           )}
         </div> */}
