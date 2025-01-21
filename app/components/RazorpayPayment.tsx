@@ -97,9 +97,8 @@ const RazorpayPayment: React.FC<RazorpayPaymentProps> = ({
           onClick={handlePayment}
           className="px-6 py-3 bg-green-700 flex gap-2 items-center text-white font-semibold rounded-full  hover:bg-green-600  focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2"
         >
-          <BiDollar className="" size={20}/>
           <span className="mr-4">Proceed to pay onboarding charge ₹{amount} Now</span>
-          <BsArrowRightCircle/>
+          <BsArrowRightCircle className="" size={18}/>
         </button>
       )}
 
