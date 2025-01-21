@@ -372,16 +372,7 @@ const Form = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-end gap-2">
-            <p className="text-sm font-medium text-zinc-800 mb-1">Powered by </p>
-            <div>
-              <p className="">
-                {" "}
-                <span className="font-bold text-3xl mr-2">Ricoz</span>
-                <span className="font-medium">Forms</span>{" "}
-              </p>
-            </div>
-          </div>
+         
         </form>
       </div>
     </div>
