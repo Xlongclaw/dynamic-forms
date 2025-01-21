@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 interface FormResponse {
   _id: string;
   formId: string;
-  responses: { [key: string]: string };
+  responses: { [key: string]: any };
   reviewed: boolean; // Include the reviewed status here
   submittedAt: string;
 }
@@ -64,27 +64,27 @@ const ResponsesPage: React.FC = () => {
 
   useEffect(() => {
     const fetchResponses = async () => {
-        try {
-          const formResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
-          );
-          if (!formResponse.ok) {
-            throw new Error(`Failed to fetch form with ID: ${formId}`);
-          }
-          const data = await formResponse.json();
-          setFormTemplateData(data.form);
-    
-          // Fetch the responses
-          const responsesResponse = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
-          );
-          setResponses(responsesResponse.data.data);
-          setLoading(false);
-        } catch (error) {
-          setError("Failed to fetch data.");
-          setLoading(false);
+      try {
+        const formResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
+        );
+        if (!formResponse.ok) {
+          throw new Error(`Failed to fetch form with ID: ${formId}`);
         }
-      };
+        const data = await formResponse.json();
+        setFormTemplateData(data.form);
+
+        // Fetch the responses
+        const responsesResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
+        );
+        setResponses(responsesResponse.data.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Failed to fetch data.");
+        setLoading(false);
+      }
+    };
     fetchResponses();
   }, [formId]);
 
@@ -213,11 +213,10 @@ const ResponsesPage: React.FC = () => {
                     <input
                       type="checkbox"
                       className="w-4 h-4 text-indigo-600"
-                      checked={selectedResponses.length === filteredResponses.length}
-                      onChange={() =>
-                    
-                        handleSelectAll()
+                      checked={
+                        selectedResponses.length === filteredResponses.length
                       }
+                      onChange={() => handleSelectAll()}
                     />
                   </th>
                   {formTemplateData.inputs.map((input: any, i: number) => (
@@ -270,6 +269,28 @@ const ResponsesPage: React.FC = () => {
                                   {response.responses[input.key]}
                                 </p>
                               </Link>
+                            </td>
+                          );
+                        } else if (
+                          Array.isArray(response.responses[input.key])
+                        ) {
+                          return (
+                            <td
+                              key={`${input.key}_${i} `}
+                              className="px-4 py-3 h-full border-b text-left text-nowrap"
+                            >
+                              {response.responses[input.key].map(
+                                (item: string, i: number) => {
+                                  return (
+                                    <span className="" key={`item_${i}`}>
+                                      {item}
+                                      {response.responses[
+                                        input.key
+                                      ].length-1 !== i && <span>, </span>}
+                                    </span>
+                                  );
+                                }
+                              )}
                             </td>
                           );
                         } else {

@@ -5,7 +5,7 @@ import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
 import Image from "next/image";
 import React, { useState } from "react";
-import { BiFile, BiImageAdd, BiPlus, BiX } from "react-icons/bi";
+import { BiFile, BiImageAdd, BiMinus, BiPlus, BiX } from "react-icons/bi";
 import { GoCheckbox } from "react-icons/go";
 import { IoRadioButtonOn, IoReload } from "react-icons/io5";
 import { PiTextT } from "react-icons/pi";
@@ -27,6 +27,12 @@ interface FormField {
   whatsappLink: string;
 }
 
+interface IRazorpay {
+  appName?: string;
+  amount?: any;
+  keyId?: string;
+}
+
 interface FormType {
   title: string;
   description: string;
@@ -34,6 +40,7 @@ interface FormType {
   banner: string;
   graphics: string[];
   inputs: FormField[];
+  razorpay: IRazorpay;
 }
 
 const CreateFormPage: React.FC = () => {
@@ -44,6 +51,11 @@ const CreateFormPage: React.FC = () => {
     banner: "",
     graphics: [],
     inputs: [],
+    razorpay: {
+      amount: 0,
+      appName: "",
+      keyId: "",
+    },
   });
 
   const [currentField, setCurrentField] = useState<FormField>({
@@ -64,6 +76,13 @@ const CreateFormPage: React.FC = () => {
   const [currentOption, setCurrentOption] = useState<string>("");
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [graphicsFiles, setGraphicsFiles] = useState<File[]>([]);
+  const [withRazorpay, setWithRazorpay] = useState<boolean>(false);
+
+
+  React.useEffect(()=>{
+    console.log(form);
+    
+  },[form])
 
   const handleAddOption = () => {
     if (currentOption.trim()) {
@@ -158,7 +177,7 @@ const CreateFormPage: React.FC = () => {
       const finalForm = {
         ...form,
         banner: bannerUrl,
-        graphics:form.graphics,
+        graphics: form.graphics,
       };
 
       const response = await axios.post(
@@ -176,6 +195,7 @@ const CreateFormPage: React.FC = () => {
         banner: "",
         graphics: [],
         inputs: [],
+        razorpay: {},
       });
       setBannerFile(null);
       setGraphicsFiles([]);
@@ -336,6 +356,66 @@ const CreateFormPage: React.FC = () => {
               setForm({ ...form, graphics: urls });
             }}
           /> */}
+          <div className="flex gap-2">
+            {!withRazorpay ? (
+              <button
+                onClick={() => setWithRazorpay(true)}
+                className="bg-green-600 hover:bg-green-700  text-white  flex justify-center items-center rounded-full py-2 px-4 gap-2 transition-all cursor-pointer active:scale-95"
+              >
+                <BiPlus />
+                <p>Add Razorpay</p>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setWithRazorpay(false);
+                  setForm({ ...form, razorpay: {} });
+                }}
+                className="bg-red-700 hover:bg-red-600  text-white  flex justify-center items-center rounded-full py-2 px-4 gap-2 transition-all cursor-pointer active:scale-95"
+              >
+                <BiMinus />
+                <p>Remove Razorpay</p>
+              </button>
+            )}
+          </div>
+          {withRazorpay && (
+            <div className="flex flex-col mt-4">
+              <p className="text-sm mb-4 text-red-400">* To enable Razorpay functionality, ensure that fields with the keys email and password are created.</p>
+              <input
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    razorpay: { ...form.razorpay, keyId: e.target.value },
+                  })
+                }
+                className="block w-full border px-3 py-2 mb-3"
+                type="text"
+                placeholder="Razorpay Key ID"
+              />
+              <input
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    razorpay: { ...form.razorpay, appName: e.target.value },
+                  })
+                }
+                className="block w-full border px-3 py-2 mb-3"
+                type="text"
+                placeholder="App Name"
+              />
+              <input
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    razorpay: { ...form.razorpay, amount: e.target.value },
+                  })
+                }
+                className="block w-full border px-3 py-2 mb-3"
+                type="number"
+                placeholder="Amount"
+              />
+            </div>
+          )}
         </div>
 
         <div className="mb-6">

@@ -1,8 +1,20 @@
-
+import RazorpayPayment from "@/app/components/RazorpayPayment";
 import { BsCheck2Circle } from "react-icons/bs";
 import { IoReload } from "react-icons/io5";
 
-const FeedbackPage = () => {
+const FeedbackPage = ({
+  amount = "1",
+  appName = "",
+  keyId = "",
+  email= "",
+  contact="",
+}: {
+  amount?: string;
+  appName?: string;
+  keyId?: string;
+  contact?:string;
+  email?:string
+}) => {
   // const [rating, setRating] = useState<number>(5); // Default rating is 5
 
   // const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,13 +29,10 @@ const FeedbackPage = () => {
           Thank you for your submission! We have successfully recorded your
           response and appreciate the time you took to provide your input. Your
           feedback is valuable to us and plays an essential role in improving
-          our services. Rest assured, your response has been securely stored and
-          will be used responsibly to enhance the experience for everyone. If
-          you have any further contributions or questions, feel free to reach
-          out. We&apos;re grateful for your support and participation!
+          our services.
         </p>
       </div>
-{/* 
+      {/* 
       <div className="mt-4 flex flex-col items-center gap-4 border px-16 py-8 rounded-3xl">
        
         <div className="flex flex-col items-center">
@@ -42,6 +51,21 @@ const FeedbackPage = () => {
         </div>
       </div>
        */}
+
+      {keyId !== "" && (
+        <div className="mt-6">
+          <RazorpayPayment
+            amount={Number(amount)}
+            contact={contact}
+            description=""
+            email={email}
+            name={appName}
+            onFailure={() => {}}
+            onSuccess={() => {}}
+          />
+        </div>
+      )}
+
       <button
         onClick={() => {
           window.location.reload();

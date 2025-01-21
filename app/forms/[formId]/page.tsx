@@ -24,6 +24,7 @@ import {
 } from "react-icons/bs";
 import XGraphicsDisplay from "@/app/components/XGraphicsDisplay";
 import { BiChevronRight } from "react-icons/bi";
+import RazorpayPayment from "@/app/components/RazorpayPayment";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -115,7 +116,16 @@ const Form = () => {
       </div>
     );
 
-  if (submitted === true) return <FeedbackPage />;
+  if (submitted === true)
+    return (
+      <FeedbackPage
+        amount={formTemplateData.razorpay.amount}
+        appName={formTemplateData.razorpay.appName}
+        contact={formData.phone ?? formData.contact ?? formData.contactnumber}
+        email={formData.email}
+        keyId={formTemplateData.razorpay.keyId}
+      />
+    );
 
   return (
     <div className="w-screen flex overflow-hidden justify-center">
@@ -351,28 +361,39 @@ const Form = () => {
             switch (field.type) {
               case "whatsappLink":
                 return (
-                  <Link
-                    className="bg-green-600 text-white flex justify-center items-center gap-2 xl:w-[40rem] w-full text-center py-3 rounded-full hover:bg-green-700 active:scale-95 transition-all"
+                  <div
+                    className="flex flex-col items-center xl:w-[40rem] w-full p-8 rounded-3xl  bg-green-50"
                     key={field.key}
-                    href={field.whatsappLink}
                   >
-                    <BsWhatsapp size={20} />
-                    <p className=" mt-[1px]">{field.label}</p>
-                  </Link>
+                    <p className="xl:text-4xl lg:text-3xl font-bold text-zinc-900 sm:text-2xl text-xl text-center">
+                      {field.label}
+                    </p>
+                    <p className="text-center xl:text-lg sm:text-base text-sm text-zinc-600 sm:my-6 my-4">
+                      {field.infoText}
+                    </p>
+                    <div className="flex sm:flex-row flex-col sm:mb-6 mb-4 gap-4 items-center">
+                      <Image
+                        width={100}
+                        height={100}
+                        alt=""
+                        src={`/mock_avatars.png`}
+                        className="xl:w-[10rem] w-[8rem] rounded-full"
+                      />
+                      <p className="xl:text-lg sm:text-base text-sm font-medium text-green-700 text-center ">
+                        Already 265+ members have joined us. 🎉
+                      </p>
+                    </div>
+                    <Link
+                      className="bg-green-600 text-white flex justify-center md:text-base text-sm  items-center gap-2 px-8 text-center py-3 rounded-full hover:bg-green-700 active:scale-95 transition-all"
+                      href={field.whatsappLink}
+                    >
+                      <BsWhatsapp size={20} />
+                      <p className=" mt-[1px]">Join Now</p>
+                    </Link>
+                  </div>
                 );
             }
           })}
-          <div className="xl:w-[40rem] w-full bg-zinc-700 text-white flex justify-center rounded-2xl p-8">
-            <div className="flex items-start gap-2">
-              <BsInfoCircle className="flex-shrink-0 mt-1" />
-              <p className="text-sm">
-                Do not submit confidential information such as credit card
-                details, mobile and ATM PINs, OTPs, account passwords, etc.{" "}
-                <span className="underline">Report Abuse</span>
-              </p>
-            </div>
-          </div>
-         
         </form>
       </div>
     </div>
