@@ -171,7 +171,7 @@ const ResponsesPage: React.FC = () => {
               <p> Mark Reviewed</p>
             </button>
           )}
-          <DownloadCSVBtn formId={formId}/>
+          <DownloadCSVBtn formId={formId} />
         </div>
 
         {selectedResponses.length !== 0 && filterReviewed && (
@@ -286,14 +286,27 @@ const ResponsesPage: React.FC = () => {
                             >
                               {response.responses[input.key].map(
                                 (item: string, i: number) => {
-                                  return (
-                                    <span className="" key={`item_${i}`}>
-                                      {item}
-                                      {response.responses[input.key].length -
-                                        1 !==
-                                        i && <span>, </span>}
-                                    </span>
-                                  );
+                                  if (
+                                    item.startsWith("http") ||
+                                    item.startsWith("https")
+                                  )
+                                    return (
+                                      <span className="" key={`item_${i}`}>
+                                        <Link className="text-blue-600 hover:underline" href={item}>{item}</Link>
+                                        {response.responses[input.key].length -
+                                          1 !==
+                                          i && <span>, </span>}
+                                      </span>
+                                    );
+                                  else
+                                    return (
+                                      <span className="" key={`item_${i}`}>
+                                        {item}
+                                        {response.responses[input.key].length -
+                                          1 !==
+                                          i && <span>, </span>}
+                                      </span>
+                                    );
                                 }
                               )}
                             </td>

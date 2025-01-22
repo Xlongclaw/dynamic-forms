@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   BiCheckCircle,
   BiChevronRight,
+  BiDownload,
   BiLink,
   BiXCircle,
 } from "react-icons/bi";
@@ -24,7 +25,7 @@ interface FormResponse {
   submittedAt: string;
 }
 
-const CleanResponsesPage: React.FC = () => {
+const ResponsesPage: React.FC = () => {
   const [responses, setResponses] = useState<FormResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -118,6 +119,7 @@ const CleanResponsesPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+
       {/* Filter Options */}
       <div className="py-2 flex items-center gap-2 bg-gray-100 px-6 justify-between h-12">
         <div className="flex gap-2 items-center">
@@ -130,30 +132,31 @@ const CleanResponsesPage: React.FC = () => {
           <label className="text-gray-700 text-sm">Reviewed</label>
         </div>
         {/* Option Bar */}
-        {selectedResponses.length !== 0 && !filterReviewed && (
-          <button
-            onClick={async () => {
-              const result = await updateReviewedStatus(
-                selectedResponses,
-                true
-              );
+        <div className="flex gap-2">
+          {selectedResponses.length !== 0 && !filterReviewed && (
+            <button
+              onClick={async () => {
+                const result = await updateReviewedStatus(
+                  selectedResponses,
+                  true
+                );
 
-              if (result.error) {
-                console.log(`Error: ${result.error}`);
-              } else {
-                toast.success("Marked all selected responses as reviewed");
-                fetchResponses();
-                setSelectedResponses([]);
-              }
-            }}
-            className="text-sm text-green-600 font-medium active:scale-95 bg-white border hover:cursor-pointer hover:bg-green-600 hover:text-white transition-all py-2 px-4 rounded-full flex items-center gap-1"
-          >
-            <BiCheckCircle size={20} />
-            <p> Mark Reviewed</p>
-          </button>
-        )}
-
-        <DownloadCSVBtn formId={formId} />
+                if (result.error) {
+                  console.log(`Error: ${result.error}`);
+                } else {
+                  toast.success("Marked all selected responses as reviewed");
+                  fetchResponses();
+                  setSelectedResponses([]);
+                }
+              }}
+              className="text-sm text-green-600 font-medium active:scale-95 bg-white border hover:cursor-pointer hover:bg-green-600 hover:text-white transition-all py-2 px-4 rounded-full flex items-center gap-1"
+            >
+              <BiCheckCircle size={20} />
+              <p> Mark Reviewed</p>
+            </button>
+          )}
+          <DownloadCSVBtn formId={formId} />
+        </div>
 
         {selectedResponses.length !== 0 && filterReviewed && (
           <button
@@ -190,7 +193,7 @@ const CleanResponsesPage: React.FC = () => {
       ) : (
         <div className="overflow-x-auto bg-white shadow-md rounded-lg m-2">
           {/* Set a fixed height for the table container */}
-          <div className="overflow-y-auto  custom-scroll max-h-[84vh]">
+          <div className="overflow-y-auto custom-scroll max-h-[84vh]">
             <table className="min-w-full table-auto text-sm text-gray-700 ">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
@@ -267,14 +270,27 @@ const CleanResponsesPage: React.FC = () => {
                             >
                               {response.responses[input.key].map(
                                 (item: string, i: number) => {
-                                  return (
-                                    <span className="" key={`item_${i}`}>
-                                      {item}
-                                      {response.responses[input.key].length -
-                                        1 !==
-                                        i && <span>, </span>}
-                                    </span>
-                                  );
+                                  if (
+                                    item.startsWith("http") ||
+                                    item.startsWith("https")
+                                  )
+                                    return (
+                                      <span className="" key={`item_${i}`}>
+                                        <Link className="text-blue-600 hover:underline" href={item}>{item}</Link>
+                                        {response.responses[input.key].length -
+                                          1 !==
+                                          i && <span>, </span>}
+                                      </span>
+                                    );
+                                  else
+                                    return (
+                                      <span className="" key={`item_${i}`}>
+                                        {item}
+                                        {response.responses[input.key].length -
+                                          1 !==
+                                          i && <span>, </span>}
+                                      </span>
+                                    );
                                 }
                               )}
                             </td>
@@ -302,4 +318,4 @@ const CleanResponsesPage: React.FC = () => {
   );
 };
 
-export default CleanResponsesPage;
+export default ResponsesPage;

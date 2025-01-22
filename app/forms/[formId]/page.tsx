@@ -120,7 +120,7 @@ const Form = () => {
     return (
       <FeedbackPage
         amount={formTemplateData.razorpay.amount ?? "0"}
-        appName={formTemplateData.razorpay.appName?? ""}
+        appName={formTemplateData.razorpay.appName ?? ""}
         contact={formData.phone ?? formData.contact ?? formData.contactnumber}
         email={formData.email ?? ""}
         keyId={formTemplateData.razorpay.keyId ?? ""}
@@ -286,7 +286,6 @@ const Form = () => {
                   <XCheckbox
                     key={field.key}
                     label={field.label}
-                    isSingle={field.isSingle}
                     required={field.required}
                     options={field.options}
                     selectedValues={
