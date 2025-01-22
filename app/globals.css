@@ -60,6 +60,22 @@ body {
   display: none;
 }
 
+.custom-scroll::-webkit-scrollbar{
+  background: transparent;
+  height: 10px;
+
+}
+
+.custom-scroll::-webkit-scrollbar-thumb{
+  background: #efefef;
+  border-radius: 10rem;
+}
+.custom-scroll::-webkit-scrollbar-thumb:hover{
+  background: #cecece;
+  border-radius: 10rem;
+}
+
+
 .spinner {
   width: 40px;
   height: 40px;

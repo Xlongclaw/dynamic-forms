@@ -14,6 +14,7 @@ import { TbForms } from "react-icons/tb";
 import DataChip from "../DataChip";
 import { updateReviewedStatus } from "@/app/utils/updateReviewedStatus";
 import toast from "react-hot-toast";
+import DownloadCSVBtn from "../DownloadCSVBtn";
 
 interface FormResponse {
   _id: string;
@@ -117,7 +118,6 @@ const CleanResponsesPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-
       {/* Filter Options */}
       <div className="py-2 flex items-center gap-2 bg-gray-100 px-6 justify-between h-12">
         <div className="flex gap-2 items-center">
@@ -152,6 +152,8 @@ const CleanResponsesPage: React.FC = () => {
             <p> Mark Reviewed</p>
           </button>
         )}
+
+        <DownloadCSVBtn formId={formId} />
 
         {selectedResponses.length !== 0 && filterReviewed && (
           <button
@@ -188,7 +190,7 @@ const CleanResponsesPage: React.FC = () => {
       ) : (
         <div className="overflow-x-auto bg-white shadow-md rounded-lg m-2">
           {/* Set a fixed height for the table container */}
-          <div className="overflow-y-auto hide-x-scroll max-h-[84vh]">
+          <div className="overflow-y-auto  custom-scroll max-h-[84vh]">
             <table className="min-w-full table-auto text-sm text-gray-700 ">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
@@ -268,9 +270,9 @@ const CleanResponsesPage: React.FC = () => {
                                   return (
                                     <span className="" key={`item_${i}`}>
                                       {item}
-                                      {response.responses[
-                                        input.key
-                                      ].length-1 !== i && <span>, </span>}
+                                      {response.responses[input.key].length -
+                                        1 !==
+                                        i && <span>, </span>}
                                     </span>
                                   );
                                 }

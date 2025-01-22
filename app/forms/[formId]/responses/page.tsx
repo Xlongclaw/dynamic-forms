@@ -6,6 +6,7 @@ import Link from "next/link";
 import {
   BiCheckCircle,
   BiChevronRight,
+  BiDownload,
   BiLink,
   BiXCircle,
 } from "react-icons/bi";
@@ -14,6 +15,7 @@ import { TbForms } from "react-icons/tb";
 import DataChip from "./DataChip";
 import { updateReviewedStatus } from "@/app/utils/updateReviewedStatus";
 import toast from "react-hot-toast";
+import DownloadCSVBtn from "./DownloadCSVBtn";
 
 interface FormResponse {
   _id: string;
@@ -146,28 +148,31 @@ const ResponsesPage: React.FC = () => {
           <label className="text-gray-700 text-sm">Reviewed</label>
         </div>
         {/* Option Bar */}
-        {selectedResponses.length !== 0 && !filterReviewed && (
-          <button
-            onClick={async () => {
-              const result = await updateReviewedStatus(
-                selectedResponses,
-                true
-              );
+        <div className="flex gap-2">
+          {selectedResponses.length !== 0 && !filterReviewed && (
+            <button
+              onClick={async () => {
+                const result = await updateReviewedStatus(
+                  selectedResponses,
+                  true
+                );
 
-              if (result.error) {
-                console.log(`Error: ${result.error}`);
-              } else {
-                toast.success("Marked all selected responses as reviewed");
-                fetchResponses();
-                setSelectedResponses([]);
-              }
-            }}
-            className="text-sm text-green-600 font-medium active:scale-95 bg-white border hover:cursor-pointer hover:bg-green-600 hover:text-white transition-all py-2 px-4 rounded-full flex items-center gap-1"
-          >
-            <BiCheckCircle size={20} />
-            <p> Mark Reviewed</p>
-          </button>
-        )}
+                if (result.error) {
+                  console.log(`Error: ${result.error}`);
+                } else {
+                  toast.success("Marked all selected responses as reviewed");
+                  fetchResponses();
+                  setSelectedResponses([]);
+                }
+              }}
+              className="text-sm text-green-600 font-medium active:scale-95 bg-white border hover:cursor-pointer hover:bg-green-600 hover:text-white transition-all py-2 px-4 rounded-full flex items-center gap-1"
+            >
+              <BiCheckCircle size={20} />
+              <p> Mark Reviewed</p>
+            </button>
+          )}
+          <DownloadCSVBtn formId={formId}/>
+        </div>
 
         {selectedResponses.length !== 0 && filterReviewed && (
           <button
@@ -204,7 +209,7 @@ const ResponsesPage: React.FC = () => {
       ) : (
         <div className="overflow-x-auto bg-white shadow-md rounded-lg m-2">
           {/* Set a fixed height for the table container */}
-          <div className="overflow-y-auto hide-x-scroll max-h-[84vh]">
+          <div className="overflow-y-auto custom-scroll max-h-[84vh]">
             <table className="min-w-full table-auto text-sm text-gray-700 ">
               <thead className="bg-gray-100 sticky top-0 z-10">
                 <tr>
@@ -284,9 +289,9 @@ const ResponsesPage: React.FC = () => {
                                   return (
                                     <span className="" key={`item_${i}`}>
                                       {item}
-                                      {response.responses[
-                                        input.key
-                                      ].length-1 !== i && <span>, </span>}
+                                      {response.responses[input.key].length -
+                                        1 !==
+                                        i && <span>, </span>}
                                     </span>
                                   );
                                 }
