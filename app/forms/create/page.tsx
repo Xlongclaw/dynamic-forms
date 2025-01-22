@@ -1,6 +1,7 @@
 "use client";
 import ImageWithLoader from "@/app/components/ImageWithLoader";
 import XImagesInput from "@/app/components/XImagesInput";
+import { normalCaseToCamelCase } from "@/app/utils/normalCaseToCamelCase";
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
 import Image from "next/image";
@@ -78,11 +79,9 @@ const CreateFormPage: React.FC = () => {
   const [graphicsFiles, setGraphicsFiles] = useState<File[]>([]);
   const [withRazorpay, setWithRazorpay] = useState<boolean>(false);
 
-
-  React.useEffect(()=>{
+  React.useEffect(() => {
     console.log(form);
-    
-  },[form])
+  }, [form]);
 
   const handleAddOption = () => {
     if (currentOption.trim()) {
@@ -380,7 +379,10 @@ const CreateFormPage: React.FC = () => {
           </div>
           {withRazorpay && (
             <div className="flex flex-col mt-4">
-              <p className="text-sm mb-4 text-red-400">* To enable Razorpay functionality, ensure that fields with the keys email and password are created.</p>
+              <p className="text-sm mb-4 text-red-400">
+                * To enable Razorpay functionality, ensure that fields with the
+                keys email and password are created.
+              </p>
               <input
                 onChange={(e) =>
                   setForm({
@@ -445,18 +447,13 @@ const CreateFormPage: React.FC = () => {
             type="text"
             placeholder="Field Label"
             value={currentField.label}
-            onChange={(e) =>
-              setCurrentField({ ...currentField, label: e.target.value })
-            }
-            className="block w-full border px-3 py-2 mb-3"
-          />
-          <input
-            type="text"
-            placeholder="Field Key"
-            value={currentField.key}
-            onChange={(e) =>
-              setCurrentField({ ...currentField, key: e.target.value })
-            }
+            onChange={(e) => {
+              setCurrentField({ ...currentField, label: e.target.value });
+              setCurrentField({
+                ...currentField,
+                key: normalCaseToCamelCase(e.target.value),
+              });
+            }}
             className="block w-full border px-3 py-2 mb-3"
           />
           {currentField.type === "text" && (
