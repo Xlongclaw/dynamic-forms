@@ -449,9 +449,21 @@ const CreateFormPage: React.FC = () => {
             value={currentField.label}
             onChange={(e) => {
               setCurrentField({ ...currentField, label: e.target.value });
+              // setCurrentField({
+              //   ...currentField,
+              //   key: normalCaseToCamelCase(e.target.value),
+              // });
+            }}
+            className="block w-full border px-3 py-2 mb-3"
+          />
+          <input
+            type="text"
+            placeholder="Field Key"
+            value={currentField.key}
+            onChange={(e) => {
               setCurrentField({
                 ...currentField,
-                key: normalCaseToCamelCase(e.target.value),
+                key: e.target.value,
               });
             }}
             className="block w-full border px-3 py-2 mb-3"
