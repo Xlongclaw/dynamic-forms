@@ -1,5 +1,6 @@
 "use client";
 import ImageWithLoader from "@/app/components/ImageWithLoader";
+import XImageInput from "@/app/components/XImageInput";
 import XImagesInput from "@/app/components/XImagesInput";
 import { normalCaseToCamelCase } from "@/app/utils/normalCaseToCamelCase";
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
@@ -346,7 +347,14 @@ const CreateFormPage: React.FC = () => {
             placeholder="Form Description"
             value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="block w-full border px-3 py-2 mb-3"
+            className="block w-full border px-3 py-2 mb-6"
+          />
+          <XImageInput
+            label="Banner Image (Landscape)"
+            accept="*"
+            onImageChange={(url) => {
+              console.log(url);
+            }}
           />
           {/* <XImagesInput
             label="Graphics"
@@ -355,7 +363,7 @@ const CreateFormPage: React.FC = () => {
               setForm({ ...form, graphics: urls });
             }}
           /> */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-4">
             {!withRazorpay ? (
               <button
                 onClick={() => setWithRazorpay(true)}

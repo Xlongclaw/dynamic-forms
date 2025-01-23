@@ -41,6 +41,28 @@ const Form = () => {
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Access the base URL from environment variables
+// const [parentMessages,setParentmessages] = useState([]);
+
+//   useEffect(()=>{
+
+//     const sendMessageToParent =()=>{
+//       window.parent.postMessage('Hello from Iframe','*')
+//     }
+
+//     const handleMessage = (event) =>{
+//       console.log('Message from parent:', event.data);
+//       setParentmessages(prev=> [...prev,event.data])
+
+//     }
+//     window.addEventListener('message', handleMessage, false)
+//     sendMessageToParent();
+
+//     return ()=>{
+//       window.removeEventListener('message',handleMessage,false)
+//     }
+    
+//   },[])
+
 
   // Fetch form fields from API
   useEffect(() => {
@@ -380,9 +402,6 @@ const Form = () => {
                         src={`/mock_avatars.png`}
                         className="xl:w-[10rem] w-[8rem] rounded-full"
                       />
-                      <p className="xl:text-lg sm:text-base text-sm font-medium text-green-700 text-center ">
-                        Already 265+ members have joined us. 🎉
-                      </p>
                     </div>
                     <Link
                       className="bg-green-600 text-white flex justify-center md:text-base text-sm  items-center gap-2 px-8 text-center py-3 rounded-full hover:bg-green-700 active:scale-95 transition-all"
