@@ -41,28 +41,28 @@ const Form = () => {
   const [submitLoading, setSubmitLoading] = React.useState<boolean>(false);
 
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Access the base URL from environment variables
-// const [parentMessages,setParentmessages] = useState([]);
 
-//   useEffect(()=>{
+  const navigateToLink = (link: string) => {
+    const message = { type: "action/navigate", link };
+    window.parent.postMessage(message, "*");
+  };
 
-//     const sendMessageToParent =()=>{
-//       window.parent.postMessage('Hello from Iframe','*')
-//     }
+  const handleMessage = (event: MessageEvent) => {
+    if (event.origin !== window.location.origin) {
+      console.warn("Origin mismatch, ignoring message.");
+      return;
+    }
+    console.log("Message received from parent:", event.data);
+  };
 
-//     const handleMessage = (event) =>{
-//       console.log('Message from parent:', event.data);
-//       setParentmessages(prev=> [...prev,event.data])
+  useEffect(() => {
+    // Set up event listener for messages from the parent
+    window.addEventListener("message", handleMessage);
 
-//     }
-//     window.addEventListener('message', handleMessage, false)
-//     sendMessageToParent();
-
-//     return ()=>{
-//       window.removeEventListener('message',handleMessage,false)
-//     }
-    
-//   },[])
-
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, []);
 
   // Fetch form fields from API
   useEffect(() => {
@@ -403,13 +403,13 @@ const Form = () => {
                         className="xl:w-[10rem] w-[8rem] rounded-full"
                       />
                     </div>
-                    <Link
+                    <button
                       className="bg-green-600 text-white flex justify-center md:text-base text-sm  items-center gap-2 px-8 text-center py-3 rounded-full hover:bg-green-700 active:scale-95 transition-all"
-                      href={field.whatsappLink}
+                      onClick={() => navigateToLink(field.whatsappLink)}
                     >
                       <BsWhatsapp size={20} />
                       <p className=" mt-[1px]">Join Now</p>
-                    </Link>
+                    </button>
                   </div>
                 );
             }
