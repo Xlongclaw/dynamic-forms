@@ -43,10 +43,12 @@ const Form = () => {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // Access the base URL from environment variables
 
   const navigateToLink = (link: string) => {
-    const message = { type: "action/navigate", link };
+    setLoading(true)
+    const message = { type: "action/navigate",  link };
     window.parent.postMessage(message, "*");
+    setLoading(false)
   };
-
+  
   const handleMessage = (event: MessageEvent) => {
     if (event.origin !== window.location.origin) {
       console.warn("Origin mismatch, ignoring message.");
@@ -200,7 +202,7 @@ const Form = () => {
                 {" "}
                 <strong>*</strong> Indicates required question
               </p>
-              <XGraphicsDisplay imageArr={formTemplateData.graphics} />
+              {/* <XGraphicsDisplay imageArr={formTemplateData.graphics} /> */}
             </div>
           )}
 
