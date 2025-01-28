@@ -71,7 +71,7 @@ const Form = () => {
   // Fetch form fields from API
   useEffect(() => {
     const fetchForm = async () => {
-      if (!formId) return;
+      if (!formTitle) return;
 
       try {
         console.log(API_BASE_URL);
@@ -93,7 +93,7 @@ const Form = () => {
     };
 
     fetchForm();
-  }, [formId, API_BASE_URL]);
+  }, [formTitle, API_BASE_URL]);
 
   const handleInputChange = (key: string, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -108,10 +108,10 @@ const Form = () => {
         ...formData,
       };
       console.log(finalData);
-      console.log(`${API_BASE_URL}/response/${formId}/responses`);
+      console.log(`${API_BASE_URL}/response/${formTemplateData._id}/responses`);
 
       const response = await fetch(
-        `${API_BASE_URL}/response/${formId}/responses`,
+        `${API_BASE_URL}/response/${formTemplateData._id}/responses`,
         {
           method: "POST",
           headers: {
