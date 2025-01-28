@@ -75,6 +75,18 @@ body {
   border-radius: 10rem;
 }
 
+.custom-scroll1::-webkit-scrollbar{
+  background: transparent;
+  width: 15px;
+}
+
+.custom-scroll1::-webkit-scrollbar-thumb{
+  background: #d2d2d2;
+}
+.custom-scroll1::-webkit-scrollbar-thumb:hover{
+  background: #b3b3b3;
+}
+
 
 .spinner {
   width: 40px;

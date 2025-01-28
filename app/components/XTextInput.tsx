@@ -24,24 +24,11 @@ const XTextInput: React.FC<XTextInputProps> = ({
 
   return (
     <div className="flex flex-col xl:w-[40rem] w-full">
-      <div className="mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base text-nowrap">
+      <div className="mx-3 mb-1 flex items-center font-medium text-zinc-600 gap-1 text-sm md:text-base text-nowrap">
         <TbForms />
         {label}
         {required && <span className="text-red-600 ml-1">*</span>}
-        {infoText !== "" && (
-          <BiInfoCircle
-            onMouseOver={() => setInfoHovered(true)}
-            onMouseOut={() => setInfoHovered(false)}
-            className="ml-1 text-zinc-500 hover:text-black"
-          />
-        )}
-        {infoHovered && infoText !== "" && (
-          <div
-            className={` bg-zinc-800 sm:block hidden text-white px-2 rounded text-sm mx-2 py-0.5`}
-          >
-            {infoText}
-          </div>
-        )}
+
       </div>
       <input
         type="text"
@@ -53,6 +40,11 @@ const XTextInput: React.FC<XTextInputProps> = ({
         onFocus={() => setInfoHovered(true)}
         onBlur={() => setInfoHovered(false)}
       />
+      <div
+            className={` sm:block hidden text-gray-600  px-2 rounded text-sm mx-2 py-0.5`}
+          >
+            {infoText}
+          </div>
     </div>
   );
 };

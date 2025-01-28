@@ -187,10 +187,10 @@ const Form = () => {
               <label className="lg:text-4xl md:text-3xl text-2xl lg:text-start text-center w-full mx-auto lg:leading-[3.5rem] lg:mx-0 font-semibold tracking-[1px] mb-4">
                 {formTemplateData.title}
               </label>
-              <p className="text-zinc-500 font-normal text-sm lg:text-start text-center leading-7 border-b pb-4">
+              <p className="text-gray-500 font-medium tracking-[1px] text-sm lg:text-start text-center leading-7  pb-4 w-full">
                 {formTemplateData.description}
               </p>
-              <p className="my-4 bg-green-600 px-2 rounded-full text-white text-sm">
+              <p className="my-4 bg-blue-600 font-medium px-2 py-1 rounded-full text-white text-sm">
                 Instructions
               </p>
               {formTemplateData.instructions.map((ins: string) => (
@@ -198,8 +198,7 @@ const Form = () => {
                   {ins}
                 </p>
               ))}
-              <p className="text-red-500 text-sm py-4 border-b w-full">
-                {" "}
+              <p className=" text-sm font-medium py-4 border-b w-full">
                 <strong>*</strong> Indicates required question
               </p>
               {/* <XGraphicsDisplay imageArr={formTemplateData.graphics} /> */}

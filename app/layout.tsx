@@ -34,6 +34,7 @@ export default function RootLayout({
             padding: '16px',
             borderRadius: '8px',
             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+            zIndex:1000
           },
         }}
          />

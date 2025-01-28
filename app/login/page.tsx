@@ -1,0 +1,98 @@
+"use client"
+import React, { useState } from "react";
+import axios from "axios";
+
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleLogin = async (e:any) => {
+    e.preventDefault(); // Prevent form reload
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      // API request to login
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+        email,
+        password,
+      });
+      // Handle success
+      setSuccess("Login successful!");
+      localStorage.setItem("authToken", response.data.token); // Store JWT token
+      setEmail("");
+      setPassword("");
+      window.location.href= "/projects"
+
+    } catch (err:any) {
+      // Handle error
+      setError(
+        err.response?.data?.error || "Something went wrong. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        <form onSubmit={handleLogin}>
+          {/* Email Input */}
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          {/* Password Input */}
+          <div className="mb-4">
+            <label htmlFor="password" className="block text-sm font-medium mb-1">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+          {/* Success Message */}
+          {success && <p className="text-green-500 text-sm mb-3">{success}</p>}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

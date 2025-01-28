@@ -66,6 +66,7 @@ const ResponsesPage: React.FC = () => {
 
   useEffect(() => {
     const fetchResponses = async () => {
+      const token = localStorage.getItem("authToken");
       try {
         const formResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
@@ -78,7 +79,12 @@ const ResponsesPage: React.FC = () => {
 
         // Fetch the responses
         const responsesResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
         setResponses(responsesResponse.data.data);
         setLoading(false);
@@ -292,7 +298,12 @@ const ResponsesPage: React.FC = () => {
                                   )
                                     return (
                                       <span className="" key={`item_${i}`}>
-                                        <Link className="text-blue-600 hover:underline" href={item}>{item}</Link>
+                                        <Link
+                                          className="text-blue-600 hover:underline"
+                                          href={item}
+                                        >
+                                          {item}
+                                        </Link>
                                         {response.responses[input.key].length -
                                           1 !==
                                           i && <span>, </span>}

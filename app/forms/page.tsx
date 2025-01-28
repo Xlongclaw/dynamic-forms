@@ -25,7 +25,7 @@ const AllForms = () => {
     const fetchForms = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form?limit=20`
         );
         setForms(response.data.forms);
         setLoading(false);

@@ -1,37 +1,31 @@
-"use client"
-import React, { useEffect, useRef } from 'react'
+"use client";
+import React, { useRef } from "react";
 
+const TestPage: React.FC = () => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
+  // Key to send to the child iframe
+  const keyToSend = "e5d1ab010e693e37d17e16d68da205e8";
 
-const Test = () => {
-  // const iframeRef = useRef(null);
-
-
-  // useEffect(()=>{
-  
-  //   const sendMessageToIframe = () =>{
-  //     if(iframeRef.current){
-  //       iframeRef.current.contentWindow.postMessage("Hello from Parrent","*")
-  //     }
-  //   }
-  //   const handleMessage = (event) =>{
-  //     console.log("Message from Iframe:", event.data)
-  //   } 
-
-  //   window.addEventListener('message', handleMessage, false)
-
-  //   sendMessageToIframe();
-
-  //   return () =>{
-  //     window.removeEventListener('message',handleMessage,false)
-  //   }
-  // },[])
+  // Send the key to iframe when the iframe is loaded
+  const handleIframeLoad = () => {
+      iframeRef!.current!.contentWindow?.postMessage(
+        { type: "SET_KEY", key: keyToSend },
+        "*"
+      );
+  };
 
   return (
-    <iframe id="if1"
-    //  ref={iframeRef}
-     className='w-screen h-screen'  src="https://dynamic-forms-git-master-xlongclaws-projects.vercel.app/forms/679207b2fde725d5d9a24a98"></iframe>
-  )
-}
+    <div>
+      <iframe
+        ref={iframeRef}
+        src="http://localhost:5173/projects/6797396b549baf1f96becb8c/form"
+        className="w-screen h-screen"
+        title="Embedded Form"
+        onLoad={handleIframeLoad} // Trigger the function after iframe is loaded
+      ></iframe>
+    </div>
+  );
+};
 
-export default Test
+export default TestPage;
