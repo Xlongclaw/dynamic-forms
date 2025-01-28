@@ -211,6 +211,12 @@ const Integrations: React.FC = () => {
               {window.location.protocol}/{window.location.host}
             </p>
           </div>
+          <div className="flex text-sm items-center gap-4">
+            <p className="text font-medium">PROJECT_ID</p>
+            <p className=" border bg-white p-2 rounded-md">
+              {projectId}
+            </p>
+          </div>
         </div>
       </div>
 

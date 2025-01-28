@@ -230,7 +230,7 @@ const CreateFormPage: React.FC = () => {
       });
       setBannerFile(null);
       setGraphicsFiles([]);
-      navigate.push("/forms");
+      navigate.push(`/projects/${projectId}/form`);
     } catch (error) {
       console.error("Error saving form:", error);
       alert("Failed to save form. Please try again.");
