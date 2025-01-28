@@ -20,10 +20,11 @@ const ProjectForms: React.FC = () => {
     project: IProject;
   }
 
-  const { data, loading: fetchLoading, error: fetchError } = useFetch<IData>(
-    `project/project/${projectId}`,
-    true
-  );
+  const {
+    data,
+    loading: fetchLoading,
+    error: fetchError,
+  } = useFetch<IData>(`project/project/${projectId}`, true);
 
   const handleCopyLink = (title: string) => {
     const link = `domain_url/forms/${normalToSnakeOrDash(title, "-")}`;
@@ -98,13 +99,17 @@ const ProjectForms: React.FC = () => {
                       </Link>
                     </div>
                     <div className="flex items-center justify-between border border-gray-200 bg-white p-3 rounded-md mb-2">
-                      <p className="text-xs font-medium flex items-center gap-2">
+                      <Link
+                        href={`${
+                          data.project.projectWebUrl
+                        }/forms/${normalToSnakeOrDash(form.title, "-")}`}
+                        className="text-xs font-medium flex items-center gap-2 hover:text-blue-700"
+                      >
                         <BsGlobe />
-                        {`{{PROJECT_DOMAIN}}/forms/${normalToSnakeOrDash(
-                          form.title,
-                          "-"
-                        )}`}
-                      </p>
+                        {`${
+                          data.project.projectWebUrl
+                        }/forms/${normalToSnakeOrDash(form.title, "-")}`}
+                      </Link>
                       <BiCopy
                         className="cursor-pointer hover:text-blue-600"
                         onClick={() => handleCopyLink(form.title)}

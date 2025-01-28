@@ -7,6 +7,7 @@ export interface IntegrationKey {
 export interface IProject extends Document {
   projectName: string;
   projectDescription: string;
+  projectWebUrl:string;
   integrationKeys: IntegrationKey[];
   forms: Types.ObjectId[]; // Array of ObjectIds referencing the 'Form' model
   createdAt: Date;

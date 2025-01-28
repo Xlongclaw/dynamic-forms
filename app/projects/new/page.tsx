@@ -4,6 +4,7 @@ import axios from "axios";
 
 const NewProject = () => {
   const [projectName, setProjectName] = useState("");
+  const [projectWebUrl, setProjectWebUrl] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
 
   const handleCreateProject = async () => {
@@ -20,6 +21,7 @@ const NewProject = () => {
         {
           projectName,
           projectDescription,
+          projectWebUrl
         },{
           headers : {
             Authorization: `Bearer ${token}`,
@@ -48,6 +50,13 @@ const NewProject = () => {
         className="w-full p-2 mb-4 border rounded"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Project Name"
+        className="w-full p-2 mb-4 border rounded"
+        value={projectName}
+        onChange={(e) => setProjectWebUrl(e.target.value)}
       />
       <textarea
         placeholder="Project Description"
