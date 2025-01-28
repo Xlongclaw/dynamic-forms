@@ -23,11 +23,7 @@ const useFetch = <T>(
         // Add Authorization header for protected routes
         if (isProtected) {
           const token = localStorage.getItem("authToken");
-          if (!token) {
-            // If no token is found, redirect to login page using window.location.href
-            window.location.href = "/login";
-            return;
-          }
+
           headers = {
             Authorization: `Bearer ${token}`,
           };

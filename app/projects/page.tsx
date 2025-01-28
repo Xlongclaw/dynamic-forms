@@ -25,7 +25,17 @@ const Projects: React.FC = () => {
         <div className="spinner"></div>
       </div>
     );
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (error) {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      // If no token is found, redirect to login page using window.location.href
+      window.location.href = "/login";
+      return;
+    }
+
+    return <p className="text-red-500">{error}</p>;
+  }
 
   if (data?.projects)
     return (

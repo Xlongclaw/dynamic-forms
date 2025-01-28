@@ -96,7 +96,7 @@ const ProjectLayout = ({
     );
   if (error) return <p className="text-red-500">{error}</p>;
 
-  if (pathname.endsWith("create") || pathname.includes("form/by-title")) return <>{children}</>;
+  if (pathname.endsWith("create") || pathname.includes("form")) return <>{children}</>;
 
   if (keyValidation)
     return (
