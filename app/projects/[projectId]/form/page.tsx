@@ -104,6 +104,7 @@ const ProjectForms: React.FC = () => {
                           data.project.projectWebUrl
                         }/forms/${normalToSnakeOrDash(form.title, "-")}`}
                         className="text-xs font-medium flex items-center gap-2 hover:text-blue-700"
+                        target="_blank"
                       >
                         <BsGlobe />
                         {`${
