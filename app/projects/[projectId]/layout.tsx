@@ -96,7 +96,8 @@ const ProjectLayout = ({
     );
   if (error) return <p className="text-red-500">{error}</p>;
 
-  if (pathname.endsWith("create") || (pathname.includes("form") && !pathname.endsWith("form") )) return <>{children}</>;
+  if (pathname.endsWith("create") || pathname.includes("form/") || pathname.includes("forms/"))
+    return <>{children}</>;
 
   if (keyValidation)
     return (
@@ -141,11 +142,7 @@ const ProjectLayout = ({
             {data?.project?.projectName}
           </p>
         </div>
-        <div className="mt-16">
-        {children}
-
-        </div>
-
+        <div className="mt-16">{children}</div>
       </div>
     );
 
