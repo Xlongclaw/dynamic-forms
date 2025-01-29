@@ -42,6 +42,9 @@ const ResponsesPage: React.FC = () => {
   }, [selectedResponses]);
 
   const fetchResponses = async () => {
+    const token = localStorage.getItem("authToken");
+    const integrationToken = localStorage.getItem("integrationToken");
+    
     try {
       const formResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
@@ -52,31 +55,8 @@ const ResponsesPage: React.FC = () => {
       const data = await formResponse.json();
       setFormTemplateData(data.form);
 
-      // Fetch the responses
-      const responsesResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
-      );
-      setResponses(responsesResponse.data.data);
-      setLoading(false);
-    } catch (error) {
-      setError("Failed to fetch data.");
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    const fetchResponses = async () => {
-      const token = localStorage.getItem("authToken");
-      try {
-        const formResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
-        );
-        if (!formResponse.ok) {
-          throw new Error(`Failed to fetch form with ID: ${formId}`);
-        }
-        const data = await formResponse.json();
-        setFormTemplateData(data.form);
-
+      if (token) {
         // Fetch the responses
         const responsesResponse = await axios.get(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`,
@@ -88,11 +68,26 @@ const ResponsesPage: React.FC = () => {
         );
         setResponses(responsesResponse.data.data);
         setLoading(false);
-      } catch (error) {
-        setError("Failed to fetch data.");
+      } else {
+        // Fetch the responses
+        const responsesResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`,
+          {
+            headers: {
+              "x-integration-token": integrationToken,
+            },
+          }
+        );
+        setResponses(responsesResponse.data.data);
         setLoading(false);
       }
-    };
+    } catch (error) {
+      setError("Failed to fetch data.");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchResponses();
   }, [formId]);
 

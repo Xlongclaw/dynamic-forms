@@ -1,6 +1,8 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { BiArrowBack } from "react-icons/bi";
+import Link from "next/link";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -9,7 +11,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleLogin = async (e:any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault(); // Prevent form reload
     setLoading(true);
     setError("");
@@ -17,18 +19,20 @@ const Login = () => {
 
     try {
       // API request to login
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
       // Handle success
       setSuccess("Login successful!");
       localStorage.setItem("authToken", response.data.token); // Store JWT token
       setEmail("");
       setPassword("");
-      window.location.href= "/projects"
-
-    } catch (err:any) {
+      window.location.href = "/projects";
+    } catch (err: any) {
       // Handle error
       setError(
         err.response?.data?.error || "Something went wrong. Please try again."
@@ -41,7 +45,20 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        <Link href={`/`} className="flex justify-between items-center">
+          <BiArrowBack
+            size={40}
+            className="mb-8 p-2 bg-blue-50 rounded-full hover:bg-blue-600 hover:text-white"
+          />
+          <p className="mb-8 ">
+            {" "}
+            <span className="font-bold text-xl mr-1">Ricoz</span>
+            <span className="font-medium text-sm">Forms</span>{" "}
+          </p>
+        </Link>
+        <div className="flex justify-between">
+          <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        </div>
         <form onSubmit={handleLogin}>
           {/* Email Input */}
           <div className="mb-4">
@@ -61,7 +78,10 @@ const Login = () => {
 
           {/* Password Input */}
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
               Password
             </label>
             <input

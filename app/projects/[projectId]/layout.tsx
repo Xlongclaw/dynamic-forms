@@ -31,52 +31,91 @@ const ProjectLayout = ({
   const projectId = params?.projectId;
   const [Sloading, setSLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [iKey, setIkey] = React.useState<string>("");
   const [keyValidation, setKeyValidation] = useState(true);
+
+  const [data, setData] = React.useState<IData | null>(null);
+  const [loading, setLoading] = React.useState<boolean>(true);
 
   const pathname = usePathname();
 
-  const validateKey = async (key: string) => {
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/project/validate-key`,
-        {
-          integrationKey: key,
-          projectId,
-        }
-      );
-      if (response.status === 200) {
-        console.log("Key is valid:", key);
-        setKeyValidation(true);
-        setSLoading(false);
-      } else {
-        console.error("Key is invalid:", key);
-        setKeyValidation(false);
-        setSLoading(false);
-      }
-    } catch (err) {
-      console.error("Error validating key:", err);
-      setKeyValidation(false);
-      setSLoading(false);
-    }
-  };
-
+  
   interface IData {
     message: string;
     project: IProject;
   }
 
-  const {
-    data,
-    loading,
-    error: fetchError,
-  } = useFetch<IData>(`project/project/${projectId}`, true);
+  React.useEffect(() => {
+    if (iKey !== "") {
+      const integrationToken = localStorage.getItem("integrationToken");
+      if (integrationToken) {
+        axios
+          .get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/project/project/${projectId}`,
+            {
+              headers: {
+                "x-integration-token": integrationToken,
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status == 200) {
+              setData(response.data);
+              setLoading(false);
+            }
+          });
+      } else {
+        // generate integration token
+        axios
+          .post(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/project/validate-key`,
+            {
+              integrationKey: iKey,
+              projectId,
+            }
+          )
+          .then((response) => {
+            if (response.status == 200) {
+              localStorage.setItem("integrationToken", response.data.token);
+              window.location.reload();
+            }
+          });
+      }
+    } else {
+      const authToken = localStorage.getItem("authToken");
+
+      if (authToken) {
+        axios
+          .get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/project/project/${projectId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          )
+          .then((response) => {
+            if (response.status == 200) {
+              setData(response.data);
+              setLoading(false);
+            } else {
+              
+              window.location.href = "/login";
+            }
+          });
+      } else {
+        setLoading(false)
+        
+      }
+    }
+  }, [iKey]);
 
   useEffect(() => {
     // Listen for messages from parent (iframe)
     const handleMessage = (event: MessageEvent) => {
       console.log("here");
       if (event.data.type === "SET_KEY" && event.data.key) {
-        validateKey(event.data.key);
+        setIkey(event.data.key);
       }
     };
 
@@ -96,10 +135,14 @@ const ProjectLayout = ({
     );
   if (error) return <p className="text-red-500">{error}</p>;
 
-  if (pathname.endsWith("create") || pathname.includes("form/") || pathname.includes("forms/"))
+  if (
+    pathname.endsWith("create") ||
+    pathname.includes("form/") ||
+    pathname.includes("forms/")
+  )
     return <>{children}</>;
 
-  if (keyValidation)
+
     return (
       <div className=" mx-auto">
         <div className=" flex justify-between items-center p-3 border-b top-0 border-gray-100 fixed w-full z-50 bg-white">

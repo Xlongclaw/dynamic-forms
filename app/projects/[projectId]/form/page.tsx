@@ -20,11 +20,16 @@ const ProjectForms: React.FC = () => {
     project: IProject;
   }
 
+  const integrationToken = localStorage.getItem("integrationToken");
+
   const {
     data,
     loading: fetchLoading,
     error: fetchError,
-  } = useFetch<IData>(`project/project/${projectId}`, true);
+  } = useFetch<IData>(`project/project/${projectId}`, true, {
+    allow: integrationToken !== null,
+    projectId: typeof projectId === "string" ? projectId : "",
+  });
 
   const handleCopyLink = (title: string) => {
     const link = `domain_url/forms/${normalToSnakeOrDash(title, "-")}`;

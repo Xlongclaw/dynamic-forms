@@ -1,6 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { BiChevronRight } from "react-icons/bi";
+import { CgLogIn, CgUserAdd } from "react-icons/cg";
 import { IoCreate } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 
@@ -19,6 +20,22 @@ const Home = () => {
         >
           <MdDashboard />
           <p className="font-medium">View Projects</p>
+          <BiChevronRight />
+        </Link>
+        <Link
+          href={`/login`}
+          className="border-2 p-2 hover:text-white hover:bg-blue-500 hover:scale-105 active:scale-95 transition-all text-zinc-800 rounded-full text-sm border-zinc-600 flex items-center gap-2 "
+        >
+          <CgLogIn />
+          <p className="font-medium">Login</p>
+          <BiChevronRight />
+        </Link>
+        <Link
+          href={`/signup`}
+          className="border-2 p-2 hover:text-white hover:bg-blue-500 hover:scale-105 active:scale-95 transition-all text-zinc-800 rounded-full text-sm border-zinc-600 flex items-center gap-2 "
+        >
+          <CgUserAdd />
+          <p className="font-medium">Signup</p>
           <BiChevronRight />
         </Link>
       </div>

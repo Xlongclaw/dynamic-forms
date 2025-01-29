@@ -1,6 +1,8 @@
-"use client"
+"use client";
 import React, { useState, FormEvent } from "react";
 import axios from "axios";
+import Link from "next/link";
+import { BiArrowBack } from "react-icons/bi";
 
 interface SignupResponse {
   message?: string;
@@ -23,11 +25,14 @@ const Signup: React.FC = () => {
 
     try {
       // API request to signup
-      const response = await axios.post<SignupResponse>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`, {
-        name,
-        email,
-        password,
-      });
+      const response = await axios.post<SignupResponse>(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+        {
+          name,
+          email,
+          password,
+        }
+      );
 
       // Handle success
       if (response.data.message) {
@@ -38,7 +43,8 @@ const Signup: React.FC = () => {
       setPassword("");
     } catch (err: any) {
       // Handle error
-      const errorMessage = err.response?.data?.error || "Something went wrong. Please try again.";
+      const errorMessage =
+        err.response?.data?.error || "Something went wrong. Please try again.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -46,9 +52,22 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen flex-col bg-gray-100">
       <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-sm">
-        <h2 className="text-2xl font-bold mb-4 text-center">Signup</h2>
+      <Link href={`/`} className="flex justify-between items-center">
+          <BiArrowBack
+            size={40}
+            className="mb-8 p-2 bg-blue-50 rounded-full hover:bg-blue-600 hover:text-white"
+          />
+          <p className="mb-8 ">
+            {" "}
+            <span className="font-bold text-xl mr-1">Ricoz</span>
+            <span className="font-medium text-sm">Forms</span>{" "}
+          </p>
+        </Link>
+        <div className="flex justify-between">
+          <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        </div>
         <form onSubmit={handleSignup}>
           {/* Name Input */}
           <div className="mb-4">
@@ -84,7 +103,10 @@ const Signup: React.FC = () => {
 
           {/* Password Input */}
           <div className="mb-4">
-            <label htmlFor="password" className="block text-sm font-medium mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
               Password
             </label>
             <input

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { BiDownload, BiX } from "react-icons/bi";
+import axios from "axios";
 
 const DownloadCSVBtn = ({ formId = "" }: { formId?: any }) => {
   const [expand, setExpand] = useState<boolean>(false);
@@ -64,32 +65,43 @@ const DownloadCSVBtn = ({ formId = "" }: { formId?: any }) => {
       if (startDate) queryParams.append("startDate", startDate);
       if (endDate) queryParams.append("endDate", endDate);
 
-      const response = await fetch(
+      const token = localStorage.getItem("authToken");
+      const integrationToken = localStorage.getItem("integrationToken");
+
+      const response = await axios.get(
         `${
           process.env.NEXT_PUBLIC_API_BASE_URL
         }/response/downloadCSV?${queryParams.toString()}`,
         {
-          method: "GET",
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : {
+                "x-integration-token": integrationToken,
+              },
+          responseType: "blob", // Important: specify the response type as blob
         }
       );
 
-      if (response.ok) {
+      // Check if the request was successful
+      if (response.status === 200) {
         setExpand(false);
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
+        const blob = response.data; // Blob data from the response
+        const url = window.URL.createObjectURL(blob); // Create a URL for the blob
 
-        // Create a link and click it to download the file
+        // Create a link and trigger the download
         const a = document.createElement("a");
         a.href = url;
-        a.download = "response_list.csv";
-        a.click();
-        window.URL.revokeObjectURL(url);
+        a.download = "response_list.csv"; // Specify the download file name
+        a.click(); // Programmatically trigger the download
+        window.URL.revokeObjectURL(url); // Clean up the object URL
       } else {
         toast.error("Failed to download CSV. Please try again.");
       }
     } catch (error) {
       console.error("Error downloading CSV:", error);
-      alert("An error occurred while downloading the CSV.");
+      toast.error("An error occurred while downloading the CSV.");
     }
   };
 
@@ -145,7 +157,10 @@ const DownloadCSVBtn = ({ formId = "" }: { formId?: any }) => {
           {selectedRange === "custom" && (
             <>
               <div className="flex flex-col w-full mt-4">
-                <label htmlFor="startDate" className="text-sm ml-4 text-gray-700">
+                <label
+                  htmlFor="startDate"
+                  className="text-sm ml-4 text-gray-700"
+                >
                   From date
                 </label>
                 <input

@@ -207,17 +207,33 @@ const CreateFormPage: React.FC = () => {
         project: projectId,
       };
       const token = localStorage.getItem("authToken");
+      const integrationToken = localStorage.getItem("integrationToken");
+      if(token){
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
+          finalForm,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("Form created successfully:", response.data);
+      }
+      else{
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
+          finalForm,
+          {
+            headers: {
+              "x-integration-token": integrationToken,
+            },
+          }
+        );
+        console.log("Form created successfully:", response.data);
+        
 
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
-        finalForm,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("Form created successfully:", response.data);
+      }
       // Reset form state
       setForm({
         title: "",

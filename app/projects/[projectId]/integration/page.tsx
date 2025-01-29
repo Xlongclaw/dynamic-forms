@@ -151,7 +151,7 @@ const Integrations: React.FC = () => {
           </div>
         )}
 
-        {error && <p className="text-red-500 mt-2">{error}</p>}
+        {error && <p className="text-red-500 mt-2">Yo don't have access to the keys</p>}
 
         {integrationKeys.length > 0 ? (
           <div className="grid lg:grid-cols-2 gap-4 ">
