@@ -25,6 +25,7 @@ import {
 import XGraphicsDisplay from "@/app/components/XGraphicsDisplay";
 import { BiChevronRight } from "react-icons/bi";
 import RazorpayPayment from "@/app/components/RazorpayPayment";
+import XFilesInput from "@/app/components/XFilesInput";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -75,7 +76,9 @@ const Form = () => {
       try {
         console.log(API_BASE_URL);
 
-        const response = await fetch(`${API_BASE_URL}/form/project/${projectId}/form/${formId}`);
+        const response = await fetch(
+          `${API_BASE_URL}/form/project/${projectId}/form/${formId}`
+        );
         if (!response.ok) {
           throw new Error(`Failed to fetch form with ID: ${formId}`);
         }
@@ -83,6 +86,7 @@ const Form = () => {
         const data = await response.json();
         setFormFields(data.form.inputs);
         setFormTemplateData(data.form);
+        console.log(data.form);
 
         setLoading(false);
       } catch (error) {
@@ -95,8 +99,14 @@ const Form = () => {
   }, [formId, API_BASE_URL]);
 
   const handleInputChange = (key: string, value: any) => {
+    console.log(value);
+
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
+
+  React.useEffect(() => {
+    console.log(formData);
+  }, [formData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,7 +201,7 @@ const Form = () => {
               <p className="text-gray-500 font-medium tracking-[1px] text-sm lg:text-start text-center leading-7  pb-4 w-full">
                 {formTemplateData.description}
               </p>
-              <p className="my-4 bg-blue-600 font-medium px-2 py-1 rounded-full text-white text-sm">
+              <p className="my-4 bg-blue-700  px-2 py-1 rounded-full text-white text-sm">
                 Instructions
               </p>
               {formTemplateData.instructions.map((ins: string) => (
@@ -200,7 +210,8 @@ const Form = () => {
                 </p>
               ))}
               <p className=" text-sm font-medium py-4 border-b w-full">
-                <strong>*</strong> Indicates required question
+                <strong className="text-red-600">*</strong> Indicates required
+                question
               </p>
               {/* <XGraphicsDisplay imageArr={formTemplateData.graphics} /> */}
             </div>
@@ -269,11 +280,13 @@ const Form = () => {
               case "image":
                 return (
                   <XImageInput
+                    id={field._id}
                     key={field.key}
                     label={field.label}
+                    infoText={field.infoText}
                     accept={field.accept}
-                    onImageChange={(urls) => {
-                      handleInputChange(field.key, urls![0]);
+                    onImageChange={(url) => {
+                      handleInputChange(field.key, url);
                     }}
                   />
                 );
@@ -281,9 +294,11 @@ const Form = () => {
               case "images":
                 return (
                   <XImagesInput
+                    id={field._id}
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
+                    infoText={field.infoText}
                     required={field.required}
                     onImageChange={(urls) => {
                       handleInputChange(field.key, urls);
@@ -294,12 +309,28 @@ const Form = () => {
               case "file":
                 return (
                   <XFileInput
+                    id={field._id}
+                    key={field.key}
+                    label={field.label}
+                    infoText={field.infoText}
+
+                    accept={field.accept}
+                    onFileChange={(files) => {
+                      handleInputChange(field.key, files);
+                    }}
+                  />
+                );
+              case "files":
+                return (
+                  <XFilesInput
+                    id={field._id}
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
-                    multiple={field.multiple}
+                    infoText={field.infoText}
+
+                    required={field.required}
                     onFilesChange={(files) => {
-                      setOtherFiles(files);
                       handleInputChange(field.key, files);
                     }}
                   />
@@ -320,6 +351,23 @@ const Form = () => {
                         : formData[field.key] || []
                     }
                     onChange={(value, checked) => {
+                      // if(value.startsWith("Other:")){
+                      //   setFormData((prev) => {
+                      //     const updatedInputs = prev.inputs.map((input:any) => {
+                      //       if (input.key === field.key) {
+                      //         return {
+                      //           ...input,
+                      //           values: input.values.filter((value: string) => !value.startsWith("Other:")),
+                      //         };
+                      //       }
+                      //       return input;
+                      //     });
+
+                      //     return { ...prev, inputs: updatedInputs };
+                      //   });
+
+                      // }
+
                       if (field.isSingle) {
                         handleInputChange(field.key, checked);
                       } else {

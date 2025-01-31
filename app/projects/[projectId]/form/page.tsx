@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { BiCopy, BiPlus } from "react-icons/bi";
+import { BiCopy, BiEdit, BiPlus, BiSolidEdit, BiX } from "react-icons/bi";
 import { FiDatabase } from "react-icons/fi";
 import { GrDocumentText } from "react-icons/gr";
 import { BsArrowRight, BsGlobe } from "react-icons/bs";
@@ -10,6 +10,8 @@ import { TbForms } from "react-icons/tb";
 import useFetch from "@/app/hooks/useFetch";
 import { IProject } from "@/app/types/ProjectTypes";
 import { normalToSnakeOrDash } from "@/app/utils/normalToSnakeOrDash";
+import { CgArrowRight } from "react-icons/cg";
+import axios from "axios";
 
 const ProjectForms: React.FC = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -21,13 +23,14 @@ const ProjectForms: React.FC = () => {
   }
 
   const integrationToken = localStorage.getItem("integrationToken");
+  const authToken = localStorage.getItem("authToken");
 
   const {
     data,
     loading: fetchLoading,
     error: fetchError,
   } = useFetch<IData>(`project/project/${projectId}`, true, {
-    allow: integrationToken !== null,
+    allow: integrationToken !== null && !authToken,
     projectId: typeof projectId === "string" ? projectId : "",
   });
 
@@ -66,7 +69,7 @@ const ProjectForms: React.FC = () => {
         {data?.project?.forms && data?.project?.forms.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-8 px-4">
             {data?.project?.forms.map((form: any) => (
-              <div
+              <div 
                 key={form._id}
                 className="rounded-lg hover:shadow-md transition-shadow w-full duration-300 p-4 pb-2 border border-gray-200 bg-gray-50/80 "
               >
@@ -95,13 +98,55 @@ const ProjectForms: React.FC = () => {
                         <FiDatabase size={18} />
                         View Responses
                       </Link>
+                      <div className="flex">
+                        <button
+                          onClick={() => {
+                            const token = localStorage.getItem("authToken");
+                            const integrationToken =
+                              localStorage.getItem("integrationToken");
 
-                      <Link
-                        href={`/projects/${projectId}/form/${form._id}`}
-                        className="flex items-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all p-2 rounded-full"
-                      >
-                        <BsArrowRight size={24} />
-                      </Link>
+                            if (token) {
+                              axios.delete(
+                                `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${form._id}`,
+                                {
+                                  headers: {
+                                    Authorization: `Bearer ${token}`,
+                                  },
+                                }
+                              );
+                              window.location.reload();
+                            } else if (integrationToken) {
+                              axios.delete(
+                                `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${form._id}`,
+                                {
+                                  headers: {
+                                    "x-integration-token": integrationToken,
+                                  },
+                                }
+                              );
+                              window.location.reload();
+                            }
+                            else{
+                              window.location.href = "/login"
+                            }
+                          }}
+                          className="flex items-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all p-2 rounded-full"
+                        >
+                          <BiX size={24} />
+                        </button>
+                        <Link
+                          href={`/projects/${projectId}/form/edit/${form._id}`}
+                          className="flex items-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all p-2 rounded-full"
+                        >
+                          <BiEdit size={24} />
+                        </Link>
+                        <Link
+                          href={`/projects/${projectId}/form/${form._id}`}
+                          className="flex items-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all p-2 rounded-full"
+                        >
+                          <CgArrowRight size={24} />
+                        </Link>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between border border-gray-200 bg-white p-3 rounded-md mb-2">
                       <Link

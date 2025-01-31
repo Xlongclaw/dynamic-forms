@@ -338,6 +338,7 @@ const Form = () => {
                   <XRadio
                     key={field.key}
                     label={field.label}
+                    required={field.required}
                     options={field.options}
                     selectedValue={formData[field.key] || ""}
                     onChange={(value) => handleInputChange(field.key, value)}

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { BiInfoCircle, BiX } from "react-icons/bi";
 import { BsEnvelope } from "react-icons/bs";
+import { GrDrag } from "react-icons/gr";
 import { LuMail } from "react-icons/lu";
 
 interface XEmailInputEditProps {
@@ -46,6 +47,8 @@ const XEmailInputEdit: React.FC<XEmailInputEditProps> = ({
 
   return (
     <div className="flex gap-2 items-center">
+            <GrDrag/>
+      
       <div className="flex flex-col xl:w-[40rem] w-full">
         {/* Editable Label */}
         <div className="mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base justify-between">
@@ -61,7 +64,7 @@ const XEmailInputEdit: React.FC<XEmailInputEditProps> = ({
             />
           ) : (
             <span
-              className="cursor-pointer font-medium"
+              className="cursor-pointer font-medium  h-[24px] min-w-48"
               onClick={() => setEditingField("label")}
             >
               {editedLabel}
@@ -99,7 +102,7 @@ const XEmailInputEdit: React.FC<XEmailInputEditProps> = ({
             />
           ) : (
             <div
-              className="cursor-pointer text-gray-500 p-3 rounded-md border border-gray-200 w-full"
+              className="cursor-pointer text-gray-400 p-3 rounded-md border border-gray-200 w-full h-12"
               onClick={() => {
                 setEditingField("placeholder");
                 handlePlaceholderFocus(); // Focus input when clicked

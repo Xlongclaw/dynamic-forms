@@ -4,12 +4,17 @@ import XCheckboxEdit from "@/app/components/XCheckBoxEdit";
 import XDateTimeFieldEdit from "@/app/components/XDateTimeFieldEdit";
 import XDropdownEdit from "@/app/components/XDropdownEdit";
 import XEmailInputEdit from "@/app/components/XEmailInputEdit";
+import XFileInputEdit from "@/app/components/XFileInputEdit";
+import XFilesInputEdit from "@/app/components/XFilesInputEdit";
 import XImageInput from "@/app/components/XImageInput";
+import XImageInputEdit from "@/app/components/XImageInputEdit";
 import XImagesInput from "@/app/components/XImagesInput";
+import XImagesInputEdit from "@/app/components/XImagesInputEdit";
 import XPhoneInputEdit from "@/app/components/XPhoneInputEdit";
 import XRadioEdit from "@/app/components/XRadioButtonEdit";
 import XTextAreaEdit from "@/app/components/XTextAreaEdit";
 import XTextInputEdit from "@/app/components/XTextInputEdit";
+import XTooltip from "@/app/components/XTooltip";
 import { normalCaseToCamelCase } from "@/app/utils/normalCaseToCamelCase";
 import { uploadFileToR2 } from "@/app/utils/uploadFileToR2";
 import axios from "axios";
@@ -50,6 +55,7 @@ import {
   LuCheckCheck,
   LuClock,
   LuFile,
+  LuFiles,
   LuImage,
   LuImages,
   LuMail,
@@ -76,6 +82,7 @@ interface FormField {
   multiple?: boolean;
   isSingle?: boolean;
   whatsappLink: string;
+  sequence: number;
 }
 
 interface IRazorpay {
@@ -125,6 +132,7 @@ const CreateFormPage: React.FC = () => {
     multiple: false,
     isSingle: false,
     whatsappLink: "",
+    sequence: 0,
   });
 
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -159,7 +167,6 @@ const CreateFormPage: React.FC = () => {
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, title: e.target.value });
-    setBannerFile(null);
   };
 
   const handleDescriptionChange = (
@@ -185,6 +192,7 @@ const CreateFormPage: React.FC = () => {
 
   React.useEffect(() => {
     console.log(form);
+    // Resequence input field in form
   }, [form]);
 
   const handleSaveForm = async () => {
@@ -208,7 +216,7 @@ const CreateFormPage: React.FC = () => {
       };
       const token = localStorage.getItem("authToken");
       const integrationToken = localStorage.getItem("integrationToken");
-      if(token){
+      if (token) {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
           finalForm,
@@ -219,8 +227,7 @@ const CreateFormPage: React.FC = () => {
           }
         );
         console.log("Form created successfully:", response.data);
-      }
-      else{
+      } else {
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_BASE_URL}/form`,
           finalForm,
@@ -231,8 +238,6 @@ const CreateFormPage: React.FC = () => {
           }
         );
         console.log("Form created successfully:", response.data);
-        
-
       }
       // Reset form state
       setForm({
@@ -252,6 +257,15 @@ const CreateFormPage: React.FC = () => {
       alert("Failed to save form. Please try again.");
     }
   };
+  const reArrangeForInputs = () => {
+    setForm((prev) => ({
+      ...prev,
+      inputs: prev.inputs.map((obj, index) => ({
+        ...obj,
+        sequence: index + 1,
+      })),
+    }));
+  };
 
   const handleBannerImageChange = async (
     e: React.ChangeEvent<HTMLInputElement>
@@ -261,13 +275,41 @@ const CreateFormPage: React.FC = () => {
     }
   };
 
-
-
   const handleEditField = (index: number) => {
     setEditIndex(index);
     setCurrentField(form.inputs[index]);
   };
 
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (
+    event: React.DragEvent<HTMLLIElement>,
+    index: number
+  ) => {
+    event.preventDefault();
+    if (draggedIndex !== null && draggedIndex !== index) {
+      const newItems = [...form.inputs];
+      const draggedItem = newItems[draggedIndex];
+      newItems.splice(draggedIndex, 1);
+      newItems.splice(index, 0, draggedItem);
+
+      // Update the sequence based on the new order
+      const updatedItems = newItems.map((item, i) => ({
+        ...item,
+        sequence: i + 1,
+      }));
+      setForm({ ...form, inputs: updatedItems });
+      setDraggedIndex(index);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+  };
 
   return (
     <div className="flex justify-between h-screen overflow-hidden">
@@ -423,208 +465,321 @@ const CreateFormPage: React.FC = () => {
               )}
             </div>
           </div>
-          <TbForms
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "untitled",
-                    label: "Label",
-                    type: "text",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuSmartphone
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "phone",
-                    label: "Phone Number",
-                    type: "phone",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuMail
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "emailAddress",
-                    label: "Email Address",
-                    type: "email",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <RiDropdownList
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "dropdown",
-                    label: "DropDown",
-                    type: "dropdown",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuText
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "description",
-                    label: "Description",
-                    type: "description",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <CgRadioChecked
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "radio",
-                    label: "Label",
-                    type: "radio",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <BiCalendarEvent
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "date",
-                    label: "Label",
-                    type: "date",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuClock
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "time",
-                    label: "Label",
-                    type: "time",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuCheckCheck
-            onClick={() => {
-              // Add new text Field
-              setForm((prev) => ({
-                ...prev,
-                inputs: [
-                  ...prev.inputs,
-                  {
-                    key: "checkbox",
-                    label: "Label",
-                    type: "checkbox",
-                    whatsappLink: "",
-                    infoText: "Info Text",
-                    placeholder: "Placeholder",
-                  },
-                ],
-              }));
-            }}
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
-          />
+          <XTooltip text="Text Field" position="left">
+            <TbForms
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "untitled",
+                      label: "Label",
+                      type: "text",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Phone Number Input" position="left">
+            <LuSmartphone
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "phone",
+                      label: "Phone Number",
+                      type: "phone",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
 
-          <LuImage
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuImages
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
-          <LuFile
-            size={32}
-            className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
-          />
+          <XTooltip text="Email Input Field" position="left">
+            <LuMail
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "emailAddress",
+                      label: "Email Address",
+                      type: "email",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Dropdown List" position="left">
+            <RiDropdownList
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "dropdown",
+                      label: "DropDown",
+                      type: "dropdown",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Text Description" position="left">
+            <LuText
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "description",
+                      label: "Description",
+                      type: "description",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Radio Options (Single selection)" position="left">
+            <CgRadioChecked
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "radio",
+                      label: "Label",
+                      type: "radio",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Checkbox Field (Multiple Selection)" position="left">
+            <LuCheckCheck
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "checkbox",
+                      label: "Label",
+                      type: "checkbox",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+
+          <XTooltip text="Date Selection Field" position="left">
+            <BiCalendarEvent
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "date",
+                      label: "Label",
+                      type: "date",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded-full hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Time Selection Field" position="left">
+            <LuClock
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "time",
+                      label: "Label",
+                      type: "time",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+
+          <XTooltip text="Image Input Field (Single)" position="left">
+            <LuImage
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "image",
+                      label: "Image",
+                      type: "image",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="Images Input Field (Multiple)" position="left">
+            <LuImages
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "images",
+                      label: "Images",
+                      type: "images",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="File Input (Single)" position="left">
+            <LuFile
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "file",
+                      label: "File",
+                      type: "file",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
+          <XTooltip text="File Input (Multiple)" position="left">
+            <LuFiles
+              onClick={() => {
+                // Add new text Field
+                setForm((prev) => ({
+                  ...prev,
+                  inputs: [
+                    ...prev.inputs,
+                    {
+                      sequence: form.inputs.length + 1,
+                      key: "files",
+                      label: "Files",
+                      type: "files",
+                      whatsappLink: "",
+                      infoText: "Info Text",
+                      placeholder: "Placeholder",
+                    },
+                  ],
+                }));
+              }}
+              size={32}
+              className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
+            />
+          </XTooltip>
         </div>
 
         <div className="flex flex-col items-start">
@@ -688,694 +843,794 @@ const CreateFormPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-6">
-          {/* <XImageInput
-            label="Banner Image (Landscape)"
-            accept="*"
-            onImageChange={(url) => {
-              console.log(url);
-            }}
-          /> */}
-
-          {/* <XImagesInput
-            label="Graphics"
-            accept="*"
-            onImageChange={(urls) => {
-              setForm({ ...form, graphics: urls });
-            }}
-          /> */}
-        </div>
-
-        {/* <div className="mb-6">
-          <h2 className="text-xl font-bold mb-3">
-            {editIndex !== null ? "Edit Field" : "Add Form Field"}
-          </h2>
-          <select
-            value={currentField.type}
-            onChange={(e) =>
-              setCurrentField({ ...currentField, type: e.target.value })
-            }
-            className="block w-full border px-3 py-2 mb-3"
-          >
-            <option value="text">Text</option>
-            <option value="phone">Phone</option>
-            <option value="email">Email</option>
-            <option value="image">Image</option>
-            <option value="description">Description</option>
-            <option value="images">Images</option>
-            <option value="file">File</option>
-            <option value="checkbox">Checkbox</option>
-            <option value="radio">Radio</option>
-            <option value="dropdown">Dropdown</option>
-            <option value="whatsappLink">WhatsApp Link</option>
-          </select>
-          <input
-            type="text"
-            placeholder="Field Label"
-            value={currentField.label}
-            onChange={(e) => {
-              setCurrentField({ ...currentField, label: e.target.value });
-              // setCurrentField({
-              //   ...currentField,
-              //   key: normalCaseToCamelCase(e.target.value),
-              // });
-            }}
-            className="block w-full border px-3 py-2 mb-3"
-          />
-          <input
-            type="text"
-            placeholder="Field Key"
-            value={currentField.key}
-            onChange={(e) => {
-              setCurrentField({
-                ...currentField,
-                key: e.target.value,
-              });
-            }}
-            className="block w-full border px-3 py-2 mb-3"
-          />
-          {currentField.type === "text" && (
-            <input
-              type="text"
-              placeholder="Placeholder"
-              value={currentField.placeholder}
-              onChange={(e) =>
-                setCurrentField({
-                  ...currentField,
-                  placeholder: e.target.value,
-                })
-              }
-              className="block w-full border px-3 py-2 mb-3"
-            />
-          )}
-
-          {currentField.type === "whatsappLink" && (
-            <input
-              type="text"
-              placeholder="WhatsApp Link"
-              value={currentField.whatsappLink}
-              onChange={(e) =>
-                setCurrentField({
-                  ...currentField,
-                  whatsappLink: e.target.value,
-                })
-              }
-              className="block w-full border px-3 py-2 mb-3"
-            />
-          )}
-          <input
-            type="text"
-            placeholder="Info Text (Optional)"
-            value={currentField.infoText}
-            onChange={(e) =>
-              setCurrentField({ ...currentField, infoText: e.target.value })
-            }
-            className="block w-full border px-3 py-2 mb-3"
-          />
-          <label className="flex items-center space-x-2 mb-3">
-            <input
-              type="checkbox"
-              checked={currentField.required}
-              onChange={(e) =>
-                setCurrentField({ ...currentField, required: e.target.checked })
-              }
-            />
-            <span>Required</span>
-          </label>
-          {["checkbox", "radio", "dropdown"].includes(currentField.type) && (
-            <>
-              <div className="mb-3">
-                <input
-                  type="text"
-                  placeholder="Add Option"
-                  value={currentOption}
-                  onChange={(e) => setCurrentOption(e.target.value)}
-                  className="block w-full border px-3 py-2 mb-2"
-                />
-                <button
-                  onClick={handleAddOption}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                  Add Option
-                </button>
-              </div>
-              <ul className="list-disc pl-6 mb-3">
-                {currentField.options?.map((option, index) => (
-                  <li key={index} className="flex justify-between items-center">
-                    {option}
-                    <button
-                      onClick={() => handleDeleteOption(index)}
-                      className="text-red-500 ml-3"
-                    >
-                      Delete
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          <button
-            onClick={handleSaveField}
-            className="bg-green-500 text-white px-3 py-2 rounded"
-          >
-            {editIndex !== null ? "Save Changes" : "Add Field"}
-          </button>
-        </div> */}
-
         <div className="mb-6 ">
           {form.inputs.length === 0 ? (
             <p></p>
           ) : (
-            <ul className="list-disc flex flex-col gap-8">
-              {form.inputs.map((field, index) => (
-                <div key={`FIELD_${index}`}>
-                  {field.type === "text" && (
-                    <div className="" key={index}>
-                      <XTextInputEdit
-                        label={field.label}
-                        infoText={field.infoText!}
-                        placeholder={field.placeholder!}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+            <ul className="list-none flex flex-col gap-8">
+              {form.inputs
+                .sort((a, b) => a.sequence - b.sequence)
+                .map((field, index) => (
+                  <li
+                    key={field.sequence}
+                    draggable
+                    onDragStart={() => handleDragStart(index)}
+                    onDragOver={(event) => handleDragOver(event, index)}
+                    onDragEnd={handleDragEnd}
+                    className={` bg-white rounded-md cursor-pointer transition-all ${
+                      draggedIndex === index
+                        ? "opacity-50 scale-105 shadow-lg"
+                        : ""
+                    }`}
+                  >
+                    {field.type === "text" && (
+                      <div className="" key={index}>
+                        <XTextInputEdit
+                          label={field.label}
+                          infoText={field.infoText!}
+                          placeholder={field.placeholder!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "phone" && (
-                    <div>
-                      <XPhoneInputEdit
-                        placeholder={field.placeholder!}
-                        infoText={field.infoText!}
-                        label={field.label}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "phone" && (
+                      <div>
+                        <XPhoneInputEdit
+                          placeholder={field.placeholder!}
+                          infoText={field.infoText!}
+                          label={field.label}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "email" && (
-                    <div>
-                      <XEmailInputEdit
-                        infoText={field.infoText!}
-                        label={field.label}
-                        placeholder={field.placeholder!}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "email" && (
+                      <div>
+                        <XEmailInputEdit
+                          infoText={field.infoText!}
+                          label={field.label}
+                          placeholder={field.placeholder!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "dropdown" && (
-                    <div>
-                      <XDropdownEdit
-                        options={[]}
-                        selectedValue=""
-                        label={field.label}
-                        placeholder={field.placeholder!}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "dropdown" && (
+                      <div>
+                        <XDropdownEdit
+                          options={[]}
+                          selectedValue=""
+                          label={field.label}
+                          placeholder={field.placeholder!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "description" && (
-                    <div>
-                      <XTextAreaEdit
-                        infoText={field.infoText!}
-                        label={field.label}
-                        placeholder={field.placeholder!}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "description" && (
+                      <div>
+                        <XTextAreaEdit
+                          infoText={field.infoText!}
+                          label={field.label}
+                          placeholder={field.placeholder!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "radio" && (
-                    <div>
-                      <XRadioEdit
-                        options={[]}
-                        selectedValue=""
-                        label={field.label}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "radio" && (
+                      <div>
+                        <XRadioEdit
+                          options={[]}
+                          selectedValue=""
+                          label={field.label}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "date" && (
-                    <div>
-                      <XDateTimeFieldEdit
-                        type="date"
-                        value=""
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "date" && (
+                      <div>
+                        <XDateTimeFieldEdit
+                          type="date"
+                          value=""
+                          placeholder={field.placeholder}
+                          label={field.label}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "time" && (
-                    <div>
-                      <XDateTimeFieldEdit
-                        type="time"
-                        value=""
-                        placeholder={field.placeholder}
-                        label={field.label}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "time" && (
+                      <div>
+                        <XDateTimeFieldEdit
+                          type="time"
+                          value=""
+                          placeholder={field.placeholder}
+                          label={field.label}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                  {field.type === "checkbox" && (
-                    <div>
-                      <XCheckboxEdit
-                        options={[]}
-                        selectedValues={[]}
-                        label={field.label}
-                        onDelete={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            inputs: prev.inputs.filter((_, i) => i !== index),
-                          }));
-                        }}
-                        onChange={(fieldKey, value) => {
-                          handleEditField(index);
-                          console.log(fieldKey, value);
-                          if (
-                            fieldKey === "label" &&
-                            typeof value === "string"
-                          ) {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? {
-                                        ...input,
-                                        key: normalCaseToCamelCase(value),
-                                        label: value,
-                                      }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          } else {
-                            setForm((prev) => {
-                              const updatedInputs = prev.inputs.map(
-                                (input, idx) =>
-                                  idx === index
-                                    ? { ...input, [fieldKey]: value }
-                                    : input
-                              );
-                              return {
-                                ...prev,
-                                inputs: updatedInputs,
-                              };
-                            });
-                          }
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "checkbox" && (
+                      <div>
+                        <XCheckboxEdit
+                          options={[]}
+                          selectedValues={[]}
+                          label={field.label}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
 
-                          // Reset edit index if necessary
-                          if (editIndex !== null) {
-                            setEditIndex(null);
-                          }
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "image" && (
+                      <div className="" key={index}>
+                        <XImageInputEdit
+                          label={field.label}
+                          infoText={field.infoText!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
+
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "images" && (
+                      <div className="" key={index}>
+                        <XImagesInputEdit
+                          label={field.label}
+                          infoText={field.infoText!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
+
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "file" && (
+                      <div className="" key={index}>
+                        <XFileInputEdit
+                          label={field.label}
+                          infoText={field.infoText!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
+
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {field.type === "files" && (
+                      <div className="" key={index}>
+                        <XFilesInputEdit
+                          label={field.label}
+                          infoText={field.infoText!}
+                          onDelete={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              inputs: prev.inputs.filter((_, i) => i !== index),
+                            }));
+                            reArrangeForInputs();
+                          }}
+                          onChange={(fieldKey, value) => {
+                            handleEditField(index);
+                            console.log(fieldKey, value);
+                            if (
+                              fieldKey === "label" &&
+                              typeof value === "string"
+                            ) {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? {
+                                          ...input,
+                                          key: normalCaseToCamelCase(value),
+                                          label: value,
+                                        }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            } else {
+                              setForm((prev) => {
+                                const updatedInputs = prev.inputs.map(
+                                  (input, idx) =>
+                                    idx === index
+                                      ? { ...input, [fieldKey]: value }
+                                      : input
+                                );
+                                return {
+                                  ...prev,
+                                  inputs: updatedInputs,
+                                };
+                              });
+                            }
+
+                            // Reset edit index if necessary
+                            if (editIndex !== null) {
+                              setEditIndex(null);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </li>
+                ))}
             </ul>
           )}
         </div>

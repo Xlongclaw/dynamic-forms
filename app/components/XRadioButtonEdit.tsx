@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { CgOptions } from "react-icons/cg";
+import { CgCheck, CgOptions } from "react-icons/cg";
 import { BiMinus, BiPlus, BiX } from "react-icons/bi";
+import { GrDrag } from "react-icons/gr";
 
 interface XRadioEditProps {
   label: string; // Label for the radio group
@@ -25,6 +26,9 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
   const [editedLabel, setEditedLabel] = useState(label);
   const [editedOptions, setEditedOptions] = useState(options);
   const [isRequired, setIsRequired] = useState(required);
+  const [withOther, setWithOther] = React.useState<boolean>(
+    options.includes("Other")
+  );
 
   const handleSave = (field: string, value: string | string[] | boolean) => {
     setEditingField(null); // Reset editing state
@@ -39,7 +43,10 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
   };
 
   const handleAddOption = () => {
-    const updatedOptions = [...editedOptions, `Choice ${editedOptions.length + 1}`];
+    const updatedOptions = [
+      ...editedOptions,
+      `Choice ${editedOptions.length + 1}`,
+    ];
     setEditedOptions(updatedOptions);
   };
 
@@ -51,6 +58,8 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
 
   return (
     <div className="flex gap-2 items-center w-full text-gray-600 ">
+      <GrDrag />
+
       <div className="w-full bg-gray-50 border-gray-100 sm:p-3 p-3 border rounded-md  xl:w-[40rem] ">
         {/* Editable Label */}
         <span className="text-gray-600 font-medium text-base mb-4 flex items-center justify-between gap-2">
@@ -66,7 +75,7 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
               />
             ) : (
               <span
-                className="cursor-pointer font-medium text-base"
+                className="cursor-pointer font-medium text-base  h-[26px] w-48"
                 onClick={() => setEditingField("label")}
               >
                 {editedLabel}
@@ -96,22 +105,33 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
               key={index}
               className="flex items-center justify-between gap-2"
             >
-              <input
-                type="text"
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                className=" p-2 rounded lg:w-[30rem] text-sm  focus:outline-none bg-white border-b focus:border-blue-600 border-gray-100 "
-              />
+              {option === "Other" ? (
+                <div className=" p-2 rounded lg:w-[30rem] text-sm  focus:outline-none bg-gray-100 border-b focus:border-blue-600 border-gray-100 ">
+                  {option}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  value={option}
+                  onChange={(e) => handleOptionChange(index, e.target.value)}
+                  className=" p-2 rounded lg:w-[30rem] text-sm  focus:outline-none bg-white border-b focus:border-blue-600 border-gray-100 "
+                />
+              )}
+
               <button className="flex items-center bg-gray-100 p-1 rounded-full hover:bg-red-600 hover:text-white ">
                 <BiMinus
                   size={16}
                   className="cursor-pointer font-semibold"
-                  onClick={() => handleRemoveOption(index)}
+                  onClick={() => {
+                    handleRemoveOption(index);
+
+                    if (options[index] === "Other") setWithOther(false);
+                  }}
                 />
               </button>
             </div>
           ))}
-          <div className="flex items-start flex-col">
+          <div className="flex items-start gap-2">
             <button
               type="button"
               onClick={handleAddOption}
@@ -119,6 +139,25 @@ const XRadioEdit: React.FC<XRadioEditProps> = ({
             >
               <BiPlus size={19} className=" " />
               Add Option
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                handleOptionChange(editedOptions.length, "Other");
+                setWithOther(true);
+              }}
+              className={`text-sm gap-1 mt-1 font-medium ${
+                withOther
+                  ? "text-green-700"
+                  : "text-gray-700 bg-gray-100 hover:bg-blue-600 hover:text-white"
+              }  active:scale-95 pr-4   p-2 rounded-full transition-all flex justify-start items-center`}
+            >
+              {withOther ? (
+                <CgCheck size={20} />
+              ) : (
+                <BiPlus size={19} className="" />
+              )}
+              {withOther ? "Other Option Enabled" : "Enable Other Option"}
             </button>
           </div>
         </div>

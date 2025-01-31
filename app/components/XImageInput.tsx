@@ -1,128 +1,162 @@
-import React, { useState } from 'react';
-import {  BiImageAdd, BiImages } from 'react-icons/bi';
-import { FiDelete } from 'react-icons/fi';
-import { RxReload } from 'react-icons/rx';
-import { uploadFileToR2 } from '../utils/uploadFileToR2';
-import Image from 'next/image';
-import ImageWithLoader from './ImageWithLoader';
+import React, { useState } from "react";
+import { BiImage, BiImageAdd, BiX } from "react-icons/bi";
+import { FiDelete } from "react-icons/fi";
+import { RxReload } from "react-icons/rx";
+import { uploadFileToR2 } from "../utils/uploadFileToR2";
+import ImageWithLoader from "./ImageWithLoader";
+import { IoImage, IoReload, IoReloadOutline } from "react-icons/io5";
+import { CgBrowse } from "react-icons/cg";
+import { TbReload } from "react-icons/tb";
 
 interface XImageInputProps {
-    label: string;
-    accept: string; // Define the file types (e.g., 'image/*' or 'application/pdf')
-    onImageChange: (string: string | null) => void;
+  label: string;
+  accept: string;
+  onImageChange: (url: string | null) => void;
+  id: string;
+  infoText?: string;
 }
 
-const XImageInput: React.FC<XImageInputProps> = ({ label, accept, onImageChange }) => {
-
-
+const XImageInput: React.FC<XImageInputProps> = ({
+  label,
+  accept,
+  onImageChange,
+  id,
+  infoText = "",
+}) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const onDelete = () => {
     setImageFile(null);
-    onImageChange(null)
-  }
+    setImageUrl(null);
+    onImageChange(null);
+  };
 
-    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        // if (e.target.files) {
-        //     onImageChange(e.target.files[0]);
-        // }
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
 
-        
-        if (e.target.files) {
-            try {
-                const fileUrl = await uploadFileToR2(e.target.files[0], 'onboarding', 'onboarding', 1);
-                console.log('File uploaded successfully:', fileUrl);
-                onImageChange(fileUrl)
-                setImageFile(e.target.files[0])
-            } catch (error) {
-                console.error('Failed to upload file:', error);
-                alert('Error uploading file');
-            }
-        }
-    };
+      // File size validation (1MB max)
+      if (file.size > 1024 * 1024) {
+        alert("File size must be under 1MB");
+        return;
+      }
 
-    const handleImageDelete = () => {
-        onDelete();
-    };
+      setIsUploading(true);
 
-    const handleImageChangeFile = () => {
-        onDelete();
-    };
+      try {
+        const fileUrl = await uploadFileToR2(
+          file,
+          "onboarding",
+          "onboarding",
+          1
+        );
+        console.log("File uploaded successfully:", fileUrl);
 
-    return (
-        <div className="xl:w-[40rem] w-full text-zinc-700 text-lg">
-            {/* <ImImage/> */}
-            <div className='flex items-center gap-3 mb-6'>
-                {/* <BiImage size={54} /> */}
-                <BiImages className='md:block hidden' size={32} />
-                <div>
-                    <label htmlFor="image-upload" className="block text-base  text-zinc-700">
-                        {label}
-                    </label>
-                    <p className='text-sm text-zinc-400 text-start mt-1'>Your {label} must be a PNG or JPEG, up to 1 MB, of any size. </p>
+        setImageFile(file);
+        setImageUrl(fileUrl);
+        onImageChange(fileUrl);
+      } catch (error) {
+        console.error("Failed to upload file:", error);
+        alert("Error uploading file");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
 
+  return (
+    <div className="xl:w-[40rem] w-full text-zinc-700 text-lg bg-gray-50 border border-gray-100 rounded-xl p-6">
+      <div className="flex items-center gap-1 mb-6">
+        <span className="flex items-center gap-1">
+          <IoImage />
+          <label
+            htmlFor={`custom-image-input-${id}`}
+            className="block text-base text-zinc-600 font-medium"
+          >
+            {label}
+          </label>
+        </span>
+      </div>
+
+      {!imageFile && (
+        <div className="flex items-center gap-8">
+          <BiImageAdd className=" text-gray-200" size={128} />
+          <div className="flex flex-col items-start">
+            <p className="text-lg font-medium text-gray-500">
+              Drag and drop the image here to upload
+            </p>
+            <p className="text-sm font-medium text-gray-400">{infoText}</p>
+
+            <label
+              htmlFor={`custom-image-input-${id}`}
+              className="text-sm bg-blue-600 hover:bg-blue-700 px-3 py-2 mt-4 text-white rounded-full flex items-center gap-1 pr-4"
+            >
+              {isUploading ? (
+                <div className="flex gap-2 items-center">
+                  <div className="spinner-white"></div>
+                  <span>Uploading...</span>
                 </div>
-
-            </div>
-
-            <input
-                type="file"
-
-                id="custom-file-input"
-                className="hidden"
-                accept={accept}
-                onChange={handleImageChange}
-
-            />
-            {
-                !imageFile && (
-                    <label
-                        htmlFor="custom-file-input"
-                        className="mt-2 cursor-pointer justify-center bg-zinc-50 text-zinc-700 py-2 px-2 rounded-md border flex items-center gap-2 text-sm font-medium"
-                    >
-                        <BiImageAdd size={24} />
-                        Select File
-                    </label>
-                )
-            }
-            {imageFile && (
-                <div className="mt-2 text-center">
-                    <ImageWithLoader
-                        src={URL.createObjectURL(imageFile)}
-                        alt="Selected"
-                        className="w-full h-60 object-cover rounded-md mx-auto"
-                    />
-
-                    <div className="mt-6 flex gap-2">
-                        <button
-                            type="button"
-                            className=" text-black flex items-center gap-2 border p-2 rounded bg-zinc-150 bg-zinc-50 hover:bg-black hover:text-white transition-all"
-                            onClick={handleImageChangeFile}
-                        >
-                            <RxReload />
-                            <p className='text-sm'>
-
-                                Change Image
-                            </p>
-
-                        </button>
-                        <button
-                            type="button"
-                            className="text-red-600 flex items-center gap-2 border p-2 rounded hover:bg-red-500 bg-zinc-50 hover:text-white transition-all"
-                            onClick={handleImageDelete}
-                        >
-                            <FiDelete />
-                            <p className='text-sm'>
-
-                                Delete Image
-                            </p>
-                        </button>
-                    </div>
-                </div>
-            )}
+              ) : (
+                <>
+                  <CgBrowse size={18} />
+                  Browse Image
+                </>
+              )}
+            </label>
+          </div>
         </div>
-    );
+      )}
+
+      <input
+        type="file"
+        id={`custom-image-input-${id}`}
+        className="hidden"
+        accept={accept}
+        onChange={handleImageChange}
+      />
+
+      {!imageFile ? (
+        <></>
+      ) : (
+        <div className="mt-2 text-center">
+          <ImageWithLoader
+            src={imageUrl || URL.createObjectURL(imageFile)}
+            alt="Selected Image"
+            className="w-full h-60 object-cover rounded-xl mx-auto overflow-hidden "
+          />
+
+          <div className="mt-4 flex gap-2 justify-between items-center">
+            <button
+              type="button"
+              className="text-white flex items-center gap-1 p-2 pr-3 rounded-full bg-blue-600 hover:bg-blue-700 hover:text-white transition-all"
+              onClick={onDelete}
+            >
+              <TbReload/>
+              <p className="text-sm">Change Image</p>
+            </button>
+            <div className="flex gap-1 items-center">
+
+            <p className="text-sm font-medium text-gray-400">
+                {imageFile.name}
+                    
+                </p>
+            <button
+              type="button"
+              className=" flex items-center gap-1  p-2 rounded-full hover:bg-red-500 bg-zinc-50 hover:text-white transition-all"
+              onClick={onDelete}
+            >
+               
+              <BiX size={24}/>
+              
+            </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default XImageInput;

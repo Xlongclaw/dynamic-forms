@@ -1,169 +1,143 @@
-import React, { useState } from "react";
-import { BiImageAdd, BiImages } from "react-icons/bi";
-import { FiDelete } from "react-icons/fi";
-import { RxReload } from "react-icons/rx";
-import { uploadFileToR2 } from "../utils/uploadFileToR2";
-import ImageWithLoader from "./ImageWithLoader";
+import React, { useState, useEffect } from "react";
+import { BiEdit, BiImage, BiImageAdd, BiX } from "react-icons/bi";
+import { TbForms } from "react-icons/tb";
+import { normalCaseToCamelCase } from "../utils/normalCaseToCamelCase";
+import { GrDrag } from "react-icons/gr";
+import { IoImage, IoImages } from "react-icons/io5";
+import { CgBrowse } from "react-icons/cg";
 
-interface XImagesInputEditProps {
-  label: string; // Label for the image input
-  accept: string; // Accept file types
-  onImageChange: (images: string[]) => void; // Callback for image changes
-  required: boolean; // Whether the field is required
-  onDelete: () => void; // Callback for deleting the component
+interface XImagesInputProps {
+  label: string;
+  infoText: string;
+  required?: boolean;
+  type?: string;
+  onChange: (key: string, value: string | boolean) => void; // Callback for field changes
+  onDelete: () => void;
 }
 
-const XImagesInputEdit: React.FC<XImagesInputEditProps> = ({
-  label,
-  accept,
-  onImageChange,
-  required,
+const XImagesInputEdit: React.FC<XImagesInputProps> = ({
+  label: initialLabel,
+  infoText: initialInfoText,
+  required = false,
+  type = "text",
+  onChange,
   onDelete,
 }) => {
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [editingField, setEditingField] = useState<"label" | "accept" | null>(null);
-  const [editedLabel, setEditedLabel] = useState(label);
-  const [editedAccept, setEditedAccept] = useState(accept);
+  const [label, setLabel] = useState(initialLabel);
+  const [infoText, setInfoText] = useState(initialInfoText);
+  const [key, setKey] = useState(normalCaseToCamelCase(initialLabel));
+
+  const [editing, setEditing] = useState<string | null>(null); // Tracks which field is being edited
   const [isRequired, setIsRequired] = useState(required);
 
-  const onDeleteImages = () => {
-    setImageFiles([]);
-    onImageChange([]);
-  };
+  useEffect(() => {
+    setKey(normalCaseToCamelCase(label));
+  }, [label]);
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      try {
-        const files = Array.from(e.target.files);
-        const uploadedUrls = await Promise.all(
-          files.map(async (file) => {
-            const fileUrl = await uploadFileToR2(file, "onboarding", "onboarding", 1);
-            return fileUrl;
-          })
-        );
-        setImageFiles((prevFiles) => [...prevFiles, ...files]);
-        onImageChange(uploadedUrls);
-      } catch (error) {
-        alert("Error uploading files");
-      }
-    }
-  };
-
+  // Handle Save/Edit Completion
   const handleSave = (field: string, value: string | boolean) => {
-    setEditingField(null); // Reset editing state
-    if (field === "label") {
-      setEditedLabel(value as string);
-    } else if (field === "accept") {
-      setEditedAccept(value as string);
-    }
-    onImageChange([]);
-    onImageChange([]); // Re-sync the images if needed
+    setEditing(null);
+    onChange(field, value); // Notify parent component of the change
+  };
+
+  const handleDelete = () => {
+    onDelete();
   };
 
   return (
-    <div className="xl:w-[40rem] w-full text-zinc-700 text-lg">
-      <div className="flex items-center gap-3 mb-6">
-        <BiImages className="md:block hidden" size={32} />
-        <div>
-          {editingField === "label" ? (
-            <input
-              type="text"
-              value={editedLabel}
-              onChange={(e) => setEditedLabel(e.target.value)}
-              onBlur={() => handleSave("label", editedLabel)}
-              className="border-b border-gray-400 focus:outline-none"
+    <div className="flex items-center gap-2">
+      <GrDrag className=" flex-shrink-0" />
+      <div>
+        <div className="flex flex-col xl:w-[40rem] w-full bg-gray-50 p-3  rounded-xl border">
+          {/* Label Section */}
+          <div className="mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base justify-between ">
+            <div className="flex gap-1 items-center">
+              <IoImages />
+              {editing === "label" ? (
+                <input
+                  type="text"
+                  value={label}
+                  onChange={(e) => setLabel(e.target.value)}
+                  onBlur={() => handleSave("label", label)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && handleSave("label", label)
+                  }
+                  className="border-b border-gray-400 focus:border-blue-500 outline-none"
+                  autoFocus
+                />
+              ) : (
+                <label
+                  className="cursor-pointer font-medium h-[24px] min-w-48"
+                  onClick={() => setEditing("label")}
+                >
+                  {label}
+                  {isRequired && <span className="text-red-600 ml-1">*</span>}
+                </label>
+              )}
+            </div>
+
+            {/* Required Checkbox */}
+            <div className="flex gap-1 items-center">
+              <input
+                type="checkbox"
+                checked={isRequired}
+                onChange={() => {
+                  setIsRequired(!isRequired);
+                  onChange("required", !isRequired); // Notify parent of change
+                }}
+                aria-label="Toggle Required"
+              />
+              <p className="text-sm ">Required</p>
+            </div>
+          </div>
+          <div className="mx-3 flex   items-center my-4 gap-8">
+            <BiImageAdd className="text-gray-200 flex-shrink-0" size={128} />
+            <div>
+              <p className="text-gray-500 text-lg font-medium">
+                Drag and drop your landscape banner image here
+              </p>
+              {/* Info Text section */}
+              <div className="sm:flex gap-1 hidden items-center text-gray-400 rounded text-sm py-0.5 mr-6">
+          {editing === "infoText" ? (
+            <textarea
+              value={infoText}
+              onChange={(e) => setInfoText(e.target.value)}
+              onBlur={() => handleSave("infoText", infoText)}
+              onKeyDown={(e) =>
+                e.key === "Enter" && handleSave("infoText", infoText)
+              }
+              className="bg-transparent outline-none border border-gray-400 focus:border-blue-500 rounded-md p-1 w-full"
+              rows={2}
+              autoFocus
             />
           ) : (
-            <span
+            <p
               className="cursor-pointer"
-              onClick={() => setEditingField("label")}
+              onClick={() => setEditing("infoText")}
             >
-              {editedLabel}
-            </span>
+              {infoText}
+            </p>
           )}
-          {isRequired && <span className="text-lg text-red-600">*</span>}
         </div>
-      </div>
-
-      <div className="text-sm text-zinc-400 mb-4">
-        {editingField === "accept" ? (
-          <input
-            type="text"
-            value={editedAccept}
-            onChange={(e) => setEditedAccept(e.target.value)}
-            onBlur={() => handleSave("accept", editedAccept)}
-            className="border-b border-gray-400 focus:outline-none"
-          />
-        ) : (
-          <span
-            className="cursor-pointer text-blue-500 underline"
-            onClick={() => setEditingField("accept")}
-          >
-            {editedAccept}
-          </span>
-        )}
-      </div>
-
-      <input
-        type="file"
-        id="custom-file-input"
-        className="hidden"
-        accept={editedAccept}
-        onChange={handleImageChange}
-        multiple
-      />
-
-      <label
-        htmlFor="custom-file-input"
-        className="mt-2 cursor-pointer justify-center bg-zinc-50 text-zinc-700 py-2 px-2 rounded-md border flex items-center gap-2 text-sm font-medium"
-      >
-        <BiImageAdd size={24} />
-        Select Files
-      </label>
-
-      {imageFiles.length > 0 && (
-        <div className="mt-2">
-          {imageFiles.map((file, index) => (
-            <div key={index} className="mb-4">
-              <ImageWithLoader
-                src={URL.createObjectURL(file)}
-                alt={`Selected Image ${index + 1}`}
-                className="w-full h-60 object-cover rounded-md mx-auto"
-              />
+              <button className="text-sm bg-blue-600 hover:bg-blue-700 px-3 py-2 mt-4 text-white rounded-full flex items-center gap-1 pr-4">
+                <CgBrowse size={18} />
+                Browse Images
+              </button>
             </div>
-          ))}
+          </div>
         </div>
-      )}
 
-      {imageFiles.length !== 0 && (
-        <button
-          type="button"
-          className="text-red-600 flex items-center gap-2 border p-2 rounded hover:bg-red-500 bg-zinc-50 hover:text-white transition-all"
-          onClick={onDeleteImages}
-        >
-          <FiDelete />
-          <p className="text-sm">Delete Images</p>
-        </button>
-      )}
-
-      <div className="mt-3 flex items-center gap-2">
-        <label className="text-sm">Required</label>
-        <input
-          type="checkbox"
-          checked={isRequired}
-          onChange={(e) => {
-            setIsRequired(e.target.checked);
-            onImageChange([]);
-          }}
-        />
+        {/* Info Text Section */}
+       
       </div>
 
-      {/* Delete Button */}
-      <FiDelete
-        onClick={onDelete}
+      {/* Delete Icon */}
+      <BiX
+        onClick={() => handleDelete()}
         size={24}
-        className="bg-zinc-100 rounded-full p-1 hover:bg-red-500 hover:text-white cursor-pointer mt-4"
-        aria-label="Remove Image Input"
+        
+        className="bg-zinc-100 rounded-full p-1 hover:bg-red-500 hover:text-white cursor-pointer flex-shrink-0"
+        aria-label="Remove Input"
       />
     </div>
   );

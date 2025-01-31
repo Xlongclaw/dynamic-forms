@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { BiX } from "react-icons/bi";
+import { GrDrag } from "react-icons/gr";
 
 interface DateTimeFieldEditProps {
   label: string;
@@ -44,6 +45,8 @@ const XDateTimeFieldEdit: React.FC<DateTimeFieldEditProps> = ({
 
   return (
     <div className="flex items-center gap-3 xl:w-[40rem] w-full bg-gray-50 p-3 border rounded">
+            <GrDrag/>
+      
       <div className="flex flex-col w-full">
         {/* Editable Label */}
         <div className="flex items-center gap-2">
@@ -58,7 +61,7 @@ const XDateTimeFieldEdit: React.FC<DateTimeFieldEditProps> = ({
             />
           ) : (
             <label
-              className="font-medium cursor-pointer flex items-center"
+              className="font-medium cursor-pointer flex items-center  h-[26px] w-48"
               onClick={() => setIsEditing(true)}
             >
               {editableLabel}

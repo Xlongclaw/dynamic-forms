@@ -21,11 +21,12 @@ const NewProject = () => {
         {
           projectName,
           projectDescription,
-          projectWebUrl
-        },{
-          headers : {
+          projectWebUrl,
+        },
+        {
+          headers: {
             Authorization: `Bearer ${token}`,
-          }
+          },
         }
       );
 
@@ -33,7 +34,7 @@ const NewProject = () => {
         alert("Project created successfully!");
         setProjectName(""); // Clear the input fields
         setProjectDescription("");
-        window.location.href = "/projects"
+        window.location.href = "/projects";
       }
     } catch (error) {
       console.error("Error creating project:", error);
@@ -53,9 +54,9 @@ const NewProject = () => {
       />
       <input
         type="text"
-        placeholder="Project Name"
+        placeholder="Project Web URL"
         className="w-full p-2 mb-4 border rounded"
-        value={projectName}
+        value={projectWebUrl}
         onChange={(e) => setProjectWebUrl(e.target.value)}
       />
       <textarea

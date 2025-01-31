@@ -29,21 +29,13 @@ const XTextArea: React.FC<XTextAreaProps> = ({
         <div className='flex flex-col xl:w-[40rem] w-full'>
             <div className='mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base text-nowrap'>
                 <BsTextParagraph />
+                <label
+                className="font-medium  h-[24px] min-w-48"
+               
+              >
                 {label}
-                {required && <span className='text-red-600 ml-1'>*</span>}
-                <BiInfoCircle
-                    onMouseOver={() => setInfoHovered(true)}
-                    onMouseOut={() => setInfoHovered(false)}
-                    className='ml-1 text-zinc-500 hover:text-black'
-                />
-                {
-                    infoHovered &&
-                <div
-                    className={` bg-zinc-800 sm:block hidden text-white px-2 rounded text-sm mx-2 py-0.5`}
-                >
-                    {infoText}
-                </div>
-                }
+                {required && <span className="text-red-600 ml-1">*</span>}
+              </label>
             </div>
             <textarea
                 placeholder={placeholder}
@@ -56,6 +48,11 @@ const XTextArea: React.FC<XTextAreaProps> = ({
                 onFocus={() => setInfoHovered(true)}
                 onBlur={() => setInfoHovered(false)}
             />
+              <p
+              className=" text-gray-600 ml-4 mt-0.5 text-sm"
+            >
+              {infoText}
+            </p>
         </div>
     );
 };

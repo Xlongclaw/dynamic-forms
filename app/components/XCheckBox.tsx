@@ -25,10 +25,10 @@ const XCheckbox: React.FC<XCheckboxProps> = ({
 
   return (
     <div
-      className={`flex flex-col ${className} xl:w-[40rem] w-full text-gray-600 bg-gray-50 sm:p-6 p-3 border rounded-xl`}
+    className="w-full xl:w-[40rem] text-gray-600 bg-gray-50 sm:p-6 p-3 border border-gray-100 rounded-xl"
     >
-      <span className=" text-gray-600 font-medium mb-4 flex items-center gap-2">
-        <BiCheckCircle size={20} />
+      <span className=" text-gray-600 font-medium mb-4 flex items-center gap-1">
+        <BiCheckCircle />
         {label} {required && <span className="text-red-600">*</span>}
       </span>
 
@@ -47,7 +47,7 @@ const XCheckbox: React.FC<XCheckboxProps> = ({
         options.map((option) => (
           <label
             key={option}
-            className="flex items-start space-x-2 py-3  md:text-base text-sm cursor-pointer"
+            className="flex items-start space-x-2 py-3  md:text-base text-sm cursor-pointer bg-white p-4 my-2 rounded-xl border border-gray-100"
           >
             <input
               type="checkbox"
@@ -55,40 +55,12 @@ const XCheckbox: React.FC<XCheckboxProps> = ({
               onChange={(e) => handleCheckboxChange(option, e.target.checked)}
               checked={selectedValues.includes(option)}
               className="w-4 h-4 cursor-pointer flex-shrink-0 text-indigo-600 hover:cursor-pointer active:scale-90 hover:scale-125 transition-all mt-1"
-              required={required} // Applying required attribute to each checkbox in the group
+              required={options.length == 0 ? required : false} // Applying required attribute to each checkbox in the group
             />
             <span>{option}</span>
           </label>
         ))
       )}
-      {/* {options.length !== 1 && (
-        <label
-          key={"others"}
-          className="flex items-center space-x-2 py-3  md:text-base text-sm"
-        >
-          <input
-            type="checkbox"
-            value={"others"}
-            onChange={(e) => handleCheckboxChange("others", e.target.checked)}
-            checked={selectedValues.includes("others")}
-            className="w-4 h-4 cursor-pointer "
-            required={required} // Applying required attribute to each checkbox in the group
-          />
-          <span>{"others"}</span>
-        </label>
-      )} */}
-      {/* {selectedValues.includes("others") && (
-        <div className="flex flex-col mt-4">
-          <label htmlFor="">{`Specify Other ${label}`}</label>
-          <input
-            // value={value}
-            // onChange={onChange}
-            className="border p-2 mt-2 rounded-md"
-            type="text"
-            placeholder="Others"
-          />
-        </div>
-      )} */}
     </div>
   );
 };

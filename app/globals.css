@@ -97,6 +97,17 @@ body {
   animation: spin 1s linear infinite;
 }
 
+.spinner-white {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent; /* Light border */
+  border-top-color: white; /* Black spinner color */
+  border-right-color: white; /* Black spinner color */
+  border-left-color: white; /* Black spinner color */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);

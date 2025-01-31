@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BiEdit, BiX } from "react-icons/bi";
 import { TbForms } from "react-icons/tb";
 import { normalCaseToCamelCase } from "../utils/normalCaseToCamelCase";
+import { GrDrag } from "react-icons/gr";
 
 interface XTextInputProps {
   label: string;
@@ -45,7 +46,8 @@ const XTextInputEdit: React.FC<XTextInputProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-2">
+      <GrDrag className=""/>
       <div className="flex flex-col xl:w-[40rem] w-full">
         {/* Label Section */}
         <div className="mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base justify-between">
@@ -65,7 +67,7 @@ const XTextInputEdit: React.FC<XTextInputProps> = ({
               />
             ) : (
               <label
-                className="cursor-pointer font-medium"
+                className="cursor-pointer font-medium h-[24px] min-w-48"
                 onClick={() => setEditing("label")}
               >
                 {label}
@@ -105,7 +107,7 @@ const XTextInputEdit: React.FC<XTextInputProps> = ({
             />
           ) : (
             <p
-              className="text-gray-400 cursor-pointer flex-grow"
+              className="text-gray-400 cursor-pointer flex-grow h-6"
               onClick={() => setEditing("placeholder")}
             >
               {placeholder}

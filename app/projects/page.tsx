@@ -39,8 +39,8 @@ const Projects: React.FC = () => {
 
   if (data?.projects)
     return (
-      <div className="mx-auto">
-        <div className="flex justify-between items-center border-b p-3 border-gray-100">
+      <div className="mx-auto pt-16">
+        <div className="flex justify-between fixed w-full bg-white top-0 items-center border-b p-3 border-gray-100">
           <div className="flex items-center gap-2 text-gray-800">
             <GoProject className="stroke-[1px]" size={24} />
             <p className="font-medium">Projects</p>
@@ -70,7 +70,7 @@ const Projects: React.FC = () => {
               <Link
                 href={`/projects/${project._id}/form`}
                 key={project._id}
-                className="bg-gray-50 border border-gray-200 p-4 rounded flex items-center gap-4"
+                className="bg-gray-50 border border-gray-200 p-4 rounded flex items-center gap-4 hover:bg-blue-50 hover:border-blue-600 transition-all"
               >
                 <div>
                   <div className="flex justify-between py-1 items-start">

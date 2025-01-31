@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { BiInfoCircle, BiX } from "react-icons/bi";
 import { BsPhone } from "react-icons/bs";
+import { GrDrag } from "react-icons/gr";
 import { LuSmartphone } from "react-icons/lu";
 
 interface XPhoneInputEditProps {
@@ -48,6 +49,8 @@ const XPhoneInputEdit: React.FC<XPhoneInputEditProps> = ({
 
   return (
     <div className="flex gap-2 items-center">
+            <GrDrag/>
+      
       <div className="flex flex-col xl:w-[40rem] w-full">
         {/* Editable Label */}
         <div className="mx-3 mb-1 flex items-center text-zinc-600 gap-1 text-sm md:text-base justify-between">
@@ -63,7 +66,7 @@ const XPhoneInputEdit: React.FC<XPhoneInputEditProps> = ({
               />
             ) : (
               <span
-                className="cursor-pointer font-medium"
+                className="cursor-pointer font-medium  h-[24px] w-48"
                 onClick={() => setEditingField("label")}
               >
                 {editedLabel}
@@ -99,7 +102,7 @@ const XPhoneInputEdit: React.FC<XPhoneInputEditProps> = ({
             />
           ) : (
             <div
-              className="cursor-pointer text-gray-500 rounded-md focus:outline-none border-gray-300 w-full"
+              className="cursor-pointer text-gray-500 rounded-md focus:outline-none border-gray-300 w-full h-6"
               onClick={() => {
                 setEditingField("placeholder");
                 handlePlaceholderFocus(); // Focus input when clicked
