@@ -23,6 +23,7 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import {
+  BiArrowBack,
   BiCalendar,
   BiCalendarEvent,
   BiCarousel,
@@ -204,7 +205,7 @@ const CreateFormPage: React.FC = () => {
           bannerFile,
           "onboarding",
           "onboarding",
-          1
+          5
         );
       }
 
@@ -313,6 +314,9 @@ const CreateFormPage: React.FC = () => {
 
   return (
     <div className="flex justify-between h-screen overflow-hidden">
+      <div onClick={()=>navigate.back()} className="bg-white h-12 active:scale-90 transition-all w-12 absolute top-6 left-6 flex justify-center items-center border rounded-full hover:bg-blue-600 hover:text-white cursor-pointer">
+        <BiArrowBack  size={20}/>
+      </div>
       <div className="col-span-2 w-2/5 border-r-2 justify-center items-center flex h-full border-dashed bg-gray-50">
         {!bannerFile ? (
           <div className="flex flex-col items-center">
@@ -635,7 +639,7 @@ const CreateFormPage: React.FC = () => {
             />
           </XTooltip>
 
-          <XTooltip text="Date Selection Field" position="left">
+          {/* <XTooltip text="Date Selection Field" position="left">
             <BiCalendarEvent
               onClick={() => {
                 // Add new text Field
@@ -682,7 +686,7 @@ const CreateFormPage: React.FC = () => {
               size={32}
               className="p-1.5 active:scale-90 hover:scale-110 rounded hover:bg-zinc-100 cursor-pointer transition-all"
             />
-          </XTooltip>
+          </XTooltip> */}
 
           <XTooltip text="Image Input Field (Single)" position="left">
             <LuImage

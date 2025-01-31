@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
+  BiArrowBack,
   BiCheckCircle,
+  BiChevronLeft,
   BiChevronRight,
   BiDownload,
   BiLink,
@@ -34,6 +36,8 @@ const ResponsesPage: React.FC = () => {
   const [selectedResponses, setSelectedResponses] = React.useState<string[]>(
     []
   );
+
+  const navigate = useRouter()
 
   const params = useParams();
   const formId = params?.formId;
@@ -122,6 +126,9 @@ const ResponsesPage: React.FC = () => {
     <div className="bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center p-4 shadow7">
         <div className="flex gap-2 items-center">
+          <div onClick={()=>navigate.back()} className=" text-white h-8 active:scale-90 transition-all w-8 flex justify-center items-center border rounded-full hover:bg-blue-700 bg-blue-600 cursor-pointer">
+                        <BiChevronLeft size={20}/>
+                      </div>
           <TbForms size={20} />
           <h1 className="text-lg font-semibold text-gray-800">
             Form Responses

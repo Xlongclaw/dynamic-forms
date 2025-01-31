@@ -69,12 +69,18 @@ const ProjectForms: React.FC = () => {
         {data?.project?.forms && data?.project?.forms.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-8 px-4">
             {data?.project?.forms.map((form: any) => (
-              <div 
+              <div
                 key={form._id}
                 className="rounded-lg hover:shadow-md transition-shadow w-full duration-300 p-4 pb-2 border border-gray-200 bg-gray-50/80 "
               >
                 <div className="items-center flex w-full gap-4 pb-0">
                   <div className="w-full">
+                    <p className="text-xs flex gap-1 text-gray-400 font-medium mb-2">
+                      <span>{new Date(form.createdAt).toDateString()}</span>
+                      <span>
+                        {new Date(form.createdAt).toLocaleTimeString()}
+                      </span>
+                    </p>
                     <div className="flex items-center justify-between">
                       <div className="font-medium text-lg mb-2 text-blue-700 flex items-center gap-1.5">
                         <GrDocumentText size={18} className="flex-shrink-0" />
@@ -83,6 +89,7 @@ const ProjectForms: React.FC = () => {
                       <span className="text-xs font-medium text-gray-400 uppercase flex items-center gap-1">
                         <TbForms />
                         <p className="text-gray-700">{form.inputs.length}</p>
+
                         <p>Inputs</p>
                       </span>
                     </div>
@@ -125,9 +132,8 @@ const ProjectForms: React.FC = () => {
                                 }
                               );
                               window.location.reload();
-                            }
-                            else{
-                              window.location.href = "/login"
+                            } else {
+                              window.location.href = "/login";
                             }
                           }}
                           className="flex items-center text-blue-600 hover:bg-blue-600 hover:text-white transition-all p-2 rounded-full"

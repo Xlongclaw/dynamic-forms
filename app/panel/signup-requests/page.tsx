@@ -19,10 +19,16 @@ const SignupRequests = () => {
   const approveSignup = async (id: string, role: string) => {
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem("authToken");
     try {
       await axios.patch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/approve-signup/${id}`, // API URL to approve signup request
-        { role } // Use selected role for the approved user
+        { role }, // Use selected role for the approved user
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
       );
       setRequests((prevRequests) =>
         prevRequests.filter((req) => req._id !== id)

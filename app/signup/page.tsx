@@ -22,9 +22,12 @@ const Signup: React.FC = () => {
     setLoading(true);
     setError("");
     setSuccess("");
+    console.log(email);
+    
 
     try {
       // API request to signup
+      const token = localStorage.getItem("authToken");
       const response = await axios.post<SignupResponse>(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
         {
@@ -36,6 +39,8 @@ const Signup: React.FC = () => {
 
       // Handle success
       if (response.data.message) {
+        console.log(response.data);
+        
         setSuccess(response.data.message);
       }
       setName("");
@@ -54,7 +59,7 @@ const Signup: React.FC = () => {
   return (
     <div className="flex items-center justify-center h-screen flex-col bg-gray-100">
       <div className="bg-white p-6 rounded-2xl shadow-md w-full max-w-sm">
-      <Link href={`/`} className="flex justify-between items-center">
+        <Link href={`/`} className="flex justify-between items-center">
           <BiArrowBack
             size={40}
             className="mb-8 p-2 bg-blue-50 rounded-full hover:bg-blue-600 hover:text-white"
@@ -66,7 +71,7 @@ const Signup: React.FC = () => {
           </p>
         </Link>
         <div className="flex justify-between">
-          <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+          <h2 className="text-2xl font-bold mb-4 text-center">SignUp</h2>
         </div>
         <form onSubmit={handleSignup}>
           {/* Name Input */}
@@ -134,6 +139,9 @@ const Signup: React.FC = () => {
           >
             {loading ? "Signing up..." : "Signup"}
           </button>
+          <p className="text-sm mt-4 text-center">
+            Already Registered ? <Link href={`/login`} className="text-blue-600 font-semibold hover:underline">Login</Link>
+          </p>
         </form>
       </div>
     </div>

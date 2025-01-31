@@ -109,6 +109,9 @@ const Login = () => {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
+          <p className="text-sm mt-4 text-center">
+            New user ? <Link href={`/signup`} className="text-blue-600 font-semibold hover:underline">Register</Link>
+          </p>
         </form>
       </div>
     </div>
