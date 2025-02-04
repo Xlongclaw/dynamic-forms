@@ -139,7 +139,7 @@ const EditFormPage: React.FC = () => {
   });
 
   React.useEffect(() => {
-    setForm(existingForm);
+    setForm((existingForm));
   }, [existingForm]);
 
   React.useEffect(() => {
@@ -237,12 +237,14 @@ const EditFormPage: React.FC = () => {
     }
   }, [isEditingDescription]);
 
-  React;
 
   React.useEffect(() => {
     console.log(form);
+    
   }, [form]);
 
+
+  
   const handleSaveForm = async () => {
     try {
       setFormSaveLoading(true);
@@ -349,7 +351,7 @@ const EditFormPage: React.FC = () => {
         ...item,
         sequence: i + 1,
       }));
-      setForm({ ...form, inputs: updatedItems });
+      setForm((prev)=>({ ...prev, inputs: updatedItems }));
       setDraggedIndex(index);
     }
   };
@@ -911,9 +913,14 @@ const EditFormPage: React.FC = () => {
           ) : (
             <ul className="list-none flex flex-col gap-8">
               {form.inputs
-                .sort((a, b) => a.sequence - b.sequence)
-                .map((field, index) => (
-                  <li
+                // .sort((a, b) => a.sequence - b.sequence)
+                .map((field, index) => 
+                  
+                  {
+                    // console.log(field.sequence,index)
+                    
+                    return (
+                      <li
                     key={field.sequence}
                     draggable
                     onDragStart={() => handleDragStart(index)}
@@ -926,7 +933,7 @@ const EditFormPage: React.FC = () => {
                     }`}
                   >
                     {field.type === "text" && (
-                      <div className="" key={index}>
+                      <div className="">
                         <XTextInputEdit
                         required={field.required}
                           label={field.label}
@@ -942,6 +949,7 @@ const EditFormPage: React.FC = () => {
                           onChange={(fieldKey, value) => {
                             handleEditField(index);
                             console.log(fieldKey, value);
+                            
                             if (
                               fieldKey === "label" &&
                               typeof value === "string"
@@ -1705,7 +1713,11 @@ const EditFormPage: React.FC = () => {
                       </div>
                     )}
                   </li>
-                ))}
+                    )
+                  }
+
+                  
+                )}
             </ul>
           )}
         </div>

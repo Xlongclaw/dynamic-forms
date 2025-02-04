@@ -394,7 +394,7 @@ const Form = () => {
                     options={field.options}
                     required={field.required}
                     selectedValue={formData[field.key] || ""}
-                    onChange={(value) => handleInputChange(field.key, value)}
+                    onChange={(value:any) => handleInputChange(field.key, value)}
                   />
                 );
 

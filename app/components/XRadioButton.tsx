@@ -16,42 +16,52 @@ const XRadio: React.FC<XRadioProps> = ({
   onChange,
   required = false,
 }) => {
+  const isOtherSelected = selectedValue.startsWith("Others: ");
   const [otherValue, setOtherValue] = React.useState<string>(
-    selectedValue.startsWith("Others: ") ? selectedValue.replace("Others: ", "") : ""
+    isOtherSelected ? selectedValue.replace("Others: ", "") : ""
   );
+
+  // Generate a unique name for each radio group instance
+  const radioGroupName = React.useId();
+
+  React.useEffect(() => {
+    if (!isOtherSelected) {
+      setOtherValue(""); // Reset otherValue if another option is selected
+    }
+  }, [selectedValue]);
 
   return (
     <div className="xl:w-[40rem] w-full bg-gray-50 border border-gray-100 sm:p-6 p-3 rounded-xl">
-      <div className="text-base text-zinc-700 flex items-center  font-medium mb-4">
+      <div className="text-base text-zinc-700 flex items-center font-medium mb-4">
         <CgOptions />
         {label} {required && <span className="text-red-600">*</span>}
       </div>
       <div>
         {options.map((option) => (
-          <div key={option} className="flex items-center p-3 rounded-xl border border-gray-100 bg-white my-2">
+          <div
+            key={option}
+            className="flex items-center p-3 rounded-xl border border-gray-100 bg-white my-2"
+          >
             <input
               type="radio"
-              id={option}
-              name="radio-group"
+              id={`${radioGroupName}-${option}`}
+              name={radioGroupName} // Unique name per component instance
               value={option}
-              checked={
-                option === "Other"
-                  ? selectedValue.startsWith("Others: ")
-                  : selectedValue === option
-              }
+              checked={selectedValue === option || (option === "Other" && isOtherSelected)}
               onChange={() => {
                 if (option !== "Other") {
                   onChange(option);
-                  setOtherValue(""); // Reset Other input when another option is selected
                 } else {
                   onChange(`Others: ${otherValue}`);
                 }
               }}
               className="mr-2"
             />
-            <label htmlFor={option} className="text-gray-600">{option}</label>
+            <label htmlFor={`${radioGroupName}-${option}`} className="text-gray-600">
+              {option}
+            </label>
 
-            {option === "Other" && selectedValue.startsWith("Others: ") && (
+            {option === "Other" && (selectedValue === "Other" || isOtherSelected) && (
               <input
                 type="text"
                 value={otherValue}
