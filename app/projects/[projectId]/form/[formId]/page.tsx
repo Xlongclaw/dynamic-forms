@@ -27,6 +27,9 @@ import { BiChevronRight } from "react-icons/bi";
 import RazorpayPayment from "@/app/components/RazorpayPayment";
 import XFilesInput from "@/app/components/XFilesInput";
 
+
+
+
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
   const formId = params?.formId; // Retrieve the formId parameter

@@ -928,6 +928,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "text" && (
                       <div className="" key={index}>
                         <XTextInputEdit
+                        required={field.required}
                           label={field.label}
                           infoText={field.infoText!}
                           placeholder={field.placeholder!}
@@ -987,6 +988,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "phone" && (
                       <div>
                         <XPhoneInputEdit
+                         required={field.required}
                           placeholder={field.placeholder!}
                           infoText={field.infoText!}
                           label={field.label}
@@ -1046,6 +1048,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "email" && (
                       <div>
                         <XEmailInputEdit
+                         required={field.required}
                           infoText={field.infoText!}
                           label={field.label}
                           placeholder={field.placeholder!}
@@ -1105,6 +1108,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "dropdown" && (
                       <div>
                         <XDropdownEdit
+                         required={field.required}
                           options={field.options? field.options : []}
                           selectedValue=""
                           label={field.label}
@@ -1165,6 +1169,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "description" && (
                       <div>
                         <XTextAreaEdit
+                         required={field.required}
                           infoText={field.infoText!}
                           label={field.label}
                           placeholder={field.placeholder!}
@@ -1224,6 +1229,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "radio" && (
                       <div>
                         <XRadioEdit
+                         required={field.required}
                           options={field.options? field.options : []}
                           selectedValue=""
                           label={field.label}
@@ -1283,6 +1289,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "date" && (
                       <div>
                         <XDateTimeFieldEdit
+                         required={field.required}
                           type="date"
                           value=""
                           placeholder={field.placeholder}
@@ -1343,6 +1350,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "time" && (
                       <div>
                         <XDateTimeFieldEdit
+                         required={field.required}
                           type="time"
                           value=""
                           placeholder={field.placeholder}
@@ -1403,6 +1411,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "checkbox" && (
                       <div>
                         <XCheckboxEdit
+                         required={field.required}
                           options={field.options? field.options : []}
                           selectedValues={[]}
                           label={field.label}
@@ -1462,6 +1471,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "image" && (
                       <div className="" key={index}>
                         <XImageInputEdit
+                         required={field.required}
                           label={field.label}
                           infoText={field.infoText!}
                           onDelete={() => {
@@ -1520,6 +1530,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "images" && (
                       <div className="" key={index}>
                         <XImagesInputEdit
+                         required={field.required}
                           label={field.label}
                           infoText={field.infoText!}
                           onDelete={() => {
@@ -1578,6 +1589,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "file" && (
                       <div className="" key={index}>
                         <XFileInputEdit
+                         required={field.required}
                           label={field.label}
                           infoText={field.infoText!}
                           onDelete={() => {
@@ -1636,6 +1648,7 @@ const EditFormPage: React.FC = () => {
                     {field.type === "files" && (
                       <div className="" key={index}>
                         <XFilesInputEdit
+                         required={field.required}
                           label={field.label}
                           infoText={field.infoText!}
                           onDelete={() => {

@@ -7,7 +7,7 @@ const uploadFileToR2 = async (
   maximumFileSizeInMB: number
 ): Promise<string> => {
 
-  const MAX_FILE_SIZE = maximumFileSizeInMB * 1024 * 1024; // 5MB in bytes
+  const MAX_FILE_SIZE = maximumFileSizeInMB * 1024 * 1024; 
 
   // Check if the file exceeds the maximum size
   if (file.size > MAX_FILE_SIZE) {

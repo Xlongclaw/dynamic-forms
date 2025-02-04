@@ -1,10 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
+  BiArrowBack,
   BiCheckCircle,
+  BiChevronLeft,
   BiChevronRight,
   BiDownload,
   BiLink,
@@ -35,6 +37,8 @@ const ResponsesPage: React.FC = () => {
     []
   );
 
+  const navigate = useRouter()
+
   const params = useParams();
   const formId = params?.formId;
   React.useEffect(() => {
@@ -42,6 +46,9 @@ const ResponsesPage: React.FC = () => {
   }, [selectedResponses]);
 
   const fetchResponses = async () => {
+    const token = localStorage.getItem("authToken");
+    const integrationToken = localStorage.getItem("integrationToken");
+    
     try {
       const formResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
@@ -52,12 +59,32 @@ const ResponsesPage: React.FC = () => {
       const data = await formResponse.json();
       setFormTemplateData(data.form);
 
-      // Fetch the responses
-      const responsesResponse = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
-      );
-      setResponses(responsesResponse.data.data);
-      setLoading(false);
+
+      if (token) {
+        // Fetch the responses
+        const responsesResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setResponses(responsesResponse.data.data);
+        setLoading(false);
+      } else {
+        // Fetch the responses
+        const responsesResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`,
+          {
+            headers: {
+              "x-integration-token": integrationToken,
+            },
+          }
+        );
+        setResponses(responsesResponse.data.data);
+        setLoading(false);
+      }
     } catch (error) {
       setError("Failed to fetch data.");
       setLoading(false);
@@ -65,28 +92,6 @@ const ResponsesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchResponses = async () => {
-      try {
-        const formResponse = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/form/${formId}`
-        );
-        if (!formResponse.ok) {
-          throw new Error(`Failed to fetch form with ID: ${formId}`);
-        }
-        const data = await formResponse.json();
-        setFormTemplateData(data.form);
-
-        // Fetch the responses
-        const responsesResponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/response/${formId}/responses`
-        );
-        setResponses(responsesResponse.data.data);
-        setLoading(false);
-      } catch (error) {
-        setError("Failed to fetch data.");
-        setLoading(false);
-      }
-    };
     fetchResponses();
   }, [formId]);
 
@@ -119,6 +124,25 @@ const ResponsesPage: React.FC = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
+      <div className="flex justify-between items-center p-4 shadow7">
+        <div className="flex gap-2 items-center">
+          <div onClick={()=>navigate.back()} className=" text-white h-8 active:scale-90 transition-all w-8 flex justify-center items-center border rounded-full hover:bg-blue-700 bg-blue-600 cursor-pointer">
+                        <BiChevronLeft size={20}/>
+                      </div>
+          <TbForms size={20} />
+          <h1 className="text-lg font-semibold text-gray-800">
+            Form Responses
+          </h1>
+        </div>
+        <Link
+          href={`/forms/${formId}`}
+          className="flex items-center gap-2 px-2 py-2 transition-all rounded-full cursor-pointer hover:bg-blue-500 hover:text-white"
+        >
+          <BiLink />
+          <p className="text-xs font-medium">{formTemplateData?.title}</p>
+          <BiChevronRight />
+        </Link>
+      </div>
 
       {/* Filter Options */}
       <div className="py-2 flex items-center gap-2 bg-gray-100 px-6 justify-between h-12">
@@ -276,7 +300,12 @@ const ResponsesPage: React.FC = () => {
                                   )
                                     return (
                                       <span className="" key={`item_${i}`}>
-                                        <Link className="text-blue-600 hover:underline" href={item}>{item}</Link>
+                                        <Link
+                                          className="text-blue-600 hover:underline"
+                                          href={item}
+                                        >
+                                          {item}
+                                        </Link>
                                         {response.responses[input.key].length -
                                           1 !==
                                           i && <span>, </span>}
