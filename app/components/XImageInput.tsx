@@ -14,6 +14,7 @@ interface XImageInputProps {
   onImageChange: (url: string | null) => void;
   id: string;
   infoText?: string;
+  required: boolean;
 }
 
 const XImageInput: React.FC<XImageInputProps> = ({
@@ -22,6 +23,7 @@ const XImageInput: React.FC<XImageInputProps> = ({
   onImageChange,
   id,
   infoText = "",
+  required
 }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -73,9 +75,11 @@ const XImageInput: React.FC<XImageInputProps> = ({
           <IoImage />
           <label
             htmlFor={`custom-image-input-${id}`}
-            className="block text-base text-zinc-600 font-medium"
+            className="text-base text-zinc-600 font-medium flex"
           >
             {label}
+            {required && <span className="text-red-600 ml-1">*</span>}
+
           </label>
         </span>
       </div>

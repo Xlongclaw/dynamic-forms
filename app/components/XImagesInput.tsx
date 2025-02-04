@@ -76,9 +76,11 @@ const XImagesInput: React.FC<XImageInputProps> = ({
           <IoImages />
           <label
             htmlFor={`custom-image-input-${id}`}
-            className="block text-base text-zinc-600 font-medium"
+            className=" text-base text-zinc-600 font-medium flex"
           >
             {label}
+            {required && <span className="text-red-600 ml-1">*</span>}
+
           </label>
         </span>
       </div>

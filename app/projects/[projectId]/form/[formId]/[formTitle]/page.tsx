@@ -25,6 +25,7 @@ import {
 import XGraphicsDisplay from "@/app/components/XGraphicsDisplay";
 import { BiChevronRight } from "react-icons/bi";
 import RazorpayPayment from "@/app/components/RazorpayPayment";
+import XFilesInput from "@/app/components/XFilesInput";
 
 const Form = () => {
   const params = useParams(); // Access dynamic route parameters
@@ -270,9 +271,12 @@ const Form = () => {
               case "image":
                 return (
                   <XImageInput
+                  id={field._id}
+
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
+                    required={field.required}
                     onImageChange={(urls) => {
                       handleInputChange(field.key, urls![0]);
                     }}
@@ -282,6 +286,7 @@ const Form = () => {
               case "images":
                 return (
                   <XImagesInput
+                  id={field._id}
                     key={field.key}
                     label={field.label}
                     accept={field.accept}
@@ -292,23 +297,40 @@ const Form = () => {
                   />
                 );
 
-              case "file":
-                return (
-                  <XFileInput
-                    key={field.key}
-                    label={field.label}
-                    accept={field.accept}
-                    multiple={field.multiple}
-                    onFilesChange={(files) => {
-                      setOtherFiles(files);
-                      handleInputChange(field.key, files);
-                    }}
-                  />
-                );
+                case "file":
+                  return (
+                    <XFileInput
+                      id={field._id}
+                      key={field.key}
+                      label={field.label}
+                      infoText={field.infoText}
+                    
+                      accept={field.accept}
+                      onFileChange={(files) => {
+                        handleInputChange(field.key, files);
+                      }}
+                    />
+                  );
+                case "files":
+                  return (
+                    <XFilesInput
+                      id={field._id}
+                      key={field.key}
+                      label={field.label}
+                      accept={field.accept}
+                      infoText={field.infoText}
+  
+                      required={field.required}
+                      onFilesChange={(files) => {
+                        handleInputChange(field.key, files);
+                      }}
+                    />
+                  );
 
               case "checkbox":
                 return (
                   <XCheckbox
+              
                     key={field.key}
                     label={field.label}
                     required={field.required}
@@ -341,6 +363,7 @@ const Form = () => {
                     key={field.key}
                     label={field.label}
                     options={field.options}
+                    required={field.required}
                     selectedValue={formData[field.key] || ""}
                     onChange={(value) => handleInputChange(field.key, value)}
                   />
@@ -349,7 +372,7 @@ const Form = () => {
               case "dropdown":
                 return (
                   <XDropdown
-                    required
+                    required={field.required}
                     key={field.key}
                     label={field.label}
                     options={field.options}

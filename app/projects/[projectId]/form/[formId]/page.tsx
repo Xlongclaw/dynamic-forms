@@ -287,6 +287,7 @@ const Form = () => {
                     key={field.key}
                     label={field.label}
                     infoText={field.infoText}
+                    required={field.required}
                     accept={field.accept}
                     onImageChange={(url) => {
                       handleInputChange(field.key, url);
@@ -391,6 +392,7 @@ const Form = () => {
                     key={field.key}
                     label={field.label}
                     options={field.options}
+                    required={field.required}
                     selectedValue={formData[field.key] || ""}
                     onChange={(value) => handleInputChange(field.key, value)}
                   />
@@ -399,7 +401,7 @@ const Form = () => {
               case "dropdown":
                 return (
                   <XDropdown
-                    required
+                    required={field.required}
                     key={field.key}
                     label={field.label}
                     options={field.options}
