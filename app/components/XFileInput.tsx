@@ -31,8 +31,8 @@ const XFileInput: React.FC<XFileInputProps> = ({
       const selectedFile = e.target.files[0];
 
       // File size validation (1MB max)
-      if (selectedFile.size > 1024 * 1024) {
-        alert("File size must be under 1MB");
+      if (selectedFile.size > 1024 * 1024 * 10) {
+        alert("File size must be under 10MB");
         return;
       }
 
@@ -43,7 +43,7 @@ const XFileInput: React.FC<XFileInputProps> = ({
           selectedFile,
           "onboarding",
           "onboarding",
-          1
+          10
         );
         console.log("File uploaded successfully:", uploadedUrl);
 

@@ -40,8 +40,8 @@ const XImageInput: React.FC<XImageInputProps> = ({
       const file = e.target.files[0];
 
       // File size validation (1MB max)
-      if (file.size > 1024 * 1024) {
-        alert("File size must be under 1MB");
+      if (file.size > 1024 * 1024 * 10) {
+        alert("File size must be under 10MB");
         return;
       }
 
