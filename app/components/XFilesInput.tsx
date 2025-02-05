@@ -37,7 +37,7 @@ const XFilesInput: React.FC<XFilesInputProps> = ({
               file,
               "onboarding",
               "onboarding",
-              1
+              10
             );
             return { name: file.name, url: fileUrl };
           })

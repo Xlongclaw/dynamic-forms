@@ -52,7 +52,7 @@ const XImageInput: React.FC<XImageInputProps> = ({
           file,
           "onboarding",
           "onboarding",
-          1
+          10
         );
         console.log("File uploaded successfully:", fileUrl);
 

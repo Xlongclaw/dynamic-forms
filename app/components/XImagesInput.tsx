@@ -46,7 +46,7 @@ const XImagesInput: React.FC<XImageInputProps> = ({
         const uploadedUrls = await Promise.all(
           files.map(
             async (file) =>
-              await uploadFileToR2(file, "onboarding", "onboarding", 1)
+              await uploadFileToR2(file, "onboarding", "onboarding", 10)
           )
         );
 
